@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import es.ait.yoplp.PlayListManager;
 import es.ait.yoplp.R;
 
 /**
@@ -124,12 +126,12 @@ public class FolderAdapter extends ArrayAdapter
         if ( selectedList.contains( file ))
         {
             selectedList.remove(file);
-            setSelected( view, false );
+            setSelected(view, false);
         }
         else
         {
             selectedList.add(file);
-            setSelected( view, true );
+            setSelected(view, true);
         }
     }
 
@@ -168,5 +170,50 @@ public class FolderAdapter extends ArrayAdapter
     private void setSelectedList( List<File> selectedList )
     {
         this.selectedList = selectedList;
+    }
+
+    /**
+     * Loads all selected files into the general playlist.
+     * If selected file is a folder, it adds all music files found in that folder in a recursive fashion
+     */
+    public void loadFiles()
+    {
+        for ( int i = 0; i < selectedList.size(); i ++ )
+        {
+            loadFiles( selectedList.get( i ));
+        }
+    }
+
+    /**
+     * Recursive algortihm. It can create a potentially very large number of arrays, so it must be
+     * optimized sometime
+     *
+     * @param file
+     */
+    private void loadFiles( File file )
+    {
+        if ( file.canRead())
+        {
+            if (file.isDirectory())
+            {
+                File files[] = file.listFiles( new MusicFileFilter());
+                Arrays.sort(files, new FileComparator());
+                for ( int i = 0; i < files.length; i ++ )
+                {
+                    if ( files[i].isDirectory())
+                    {
+                        loadFiles(files[i]);
+                    }
+                    else // Avoid extra recursive calls that generate overhead
+                    {
+                        PlayListManager.getInstance().add(file);
+                    }
+                }
+            }
+            else
+            {
+                PlayListManager.getInstance().add(file);
+            }
+        }
     }
 }

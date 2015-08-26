@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ import es.ait.yoplp.R;
 /**
  * Created by aitkiar on 24/08/15.
  */
-public class FileChooserActivity extends AppCompatActivity
+public class FileChooserActivity extends AppCompatActivity implements View.OnClickListener
 {
 
     private Stack<File> folderStack = new Stack<File>();
@@ -102,6 +103,12 @@ public class FileChooserActivity extends AppCompatActivity
 
         TextView textView= (TextView) findViewById(R.id.fcUrlText );
         textView.setText(!folderStack.empty() ? folderStack.peek().getAbsolutePath() : "");
+
+        Button okButton = (Button) findViewById(R.id.fcOkButton );
+        okButton.setOnClickListener(this);
+
+        Button cancelButton = (Button) findViewById(R.id.fcCancelButton );
+        cancelButton.setOnClickListener( this );
     }
 
     @Override
@@ -174,4 +181,26 @@ public class FileChooserActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Method to control onclick on both buttons
+     * @param v
+     */
+    @Override
+    public void onClick(View v)
+    {
+        switch( v.getId())
+        {
+            case R.id.fcOkButton:
+            {
+                ((FolderAdapter)((ListView) findViewById(R.id.fcFileList )).getAdapter()).loadFiles();
+                finish();
+                break;
+            }
+            case R.id.fcCancelButton:
+            {
+                finish();
+                break;
+            }
+        }
+    }
 }

@@ -17,17 +17,20 @@
         android:layout_above="@id/buttonContainer"/>
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/buttonContainer">
+        android:id="@+id/buttonContainer"
+        android:layout_centerHorizontal="true">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/fcOkButton"
             android:text="@string/button_ok"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/fcCancelButton"
             android:text="@string/button_cancel"/>
     </LinearLayout>
 
