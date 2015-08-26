@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">yoplp</string>
+
+
+    <string name="menuAddFiles">Añadir Ficheros</string>
+
+    <string name="action_settings">Configuración</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="button_ok">Aceptar</string>
+</resources>
