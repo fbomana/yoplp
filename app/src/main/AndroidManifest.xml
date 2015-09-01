@@ -18,6 +18,7 @@
         <activity
             android:name=".fileChooser.FileChooserActivity"
             android:label="yoplp file chooser"/>
+        <service android:name=".MediaPlayerService"/>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

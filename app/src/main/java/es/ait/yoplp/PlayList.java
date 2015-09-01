@@ -75,10 +75,9 @@ public class PlayList<E> extends ArrayList<E>
      */
     public E next()
     {
-        if ( pointer < size() - 1 )
+        if ( pointer < size() - 1 && pointer >= 0 )
         {
-            pointer ++;
-            return get( pointer );
+            return get( pointer ++ );
         }
         return null;
     }
@@ -89,10 +88,9 @@ public class PlayList<E> extends ArrayList<E>
      */
     public E previous()
     {
-        if ( pointer > 0 )
+        if ( pointer >= 0 )
         {
-            pointer --;
-            return get( pointer );
+            return get( pointer -- );
         }
         return null;
     }

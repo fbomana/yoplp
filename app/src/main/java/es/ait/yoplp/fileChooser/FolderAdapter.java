@@ -202,11 +202,11 @@ public class FolderAdapter extends ArrayAdapter
                 {
                     if ( files[i].isDirectory())
                     {
-                        loadFiles(files[i]);
+                        loadFiles( files[i] );
                     }
                     else // Avoid extra recursive calls that generate overhead
                     {
-                        PlayListManager.getInstance().add(file);
+                        PlayListManager.getInstance().add(files[i]);
                     }
                 }
             }
