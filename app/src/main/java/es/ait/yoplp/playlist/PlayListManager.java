@@ -1,4 +1,4 @@
-package es.ait.yoplp;
+package es.ait.yoplp.playlist;
 
 import java.io.File;
 
@@ -6,9 +6,9 @@ import java.io.File;
  * Singleton version of the PlayList class that we will use to storage the files of the active playlist.
  *
  */
-public class PlayListManager<E> extends PlayList<E>
+public class PlayListManager<Track> extends PlayList<Track>
 {
-    private static PlayListManager<File> instance;
+    private static PlayListManager instance;
 
     private PlayListManager()
     {
@@ -18,11 +18,11 @@ public class PlayListManager<E> extends PlayList<E>
      * returns de only instance of the playlist
      * @return
      */
-    public static PlayListManager<File> getInstance()
+    public static PlayListManager getInstance()
     {
         if ( instance == null )
         {
-            instance = new PlayListManager<File>();
+            instance = new PlayListManager();
         }
         return instance;
     }

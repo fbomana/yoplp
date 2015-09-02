@@ -1,5 +1,6 @@
 package es.ait.yoplp.fileChooser;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Stack;
 
 import es.ait.yoplp.R;
+import es.ait.yoplp.playlist.PlayListInfoService;
 
 /**
  * Created by aitkiar on 24/08/15.

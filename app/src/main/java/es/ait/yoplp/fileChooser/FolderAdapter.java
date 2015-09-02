@@ -13,8 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import es.ait.yoplp.PlayListManager;
+import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.R;
+import es.ait.yoplp.playlist.Track;
 
 /**
  * Adapter that permits to pass the contents of a directory to a ListView. It sorts the elements of
@@ -206,13 +207,13 @@ public class FolderAdapter extends ArrayAdapter
                     }
                     else // Avoid extra recursive calls that generate overhead
                     {
-                        PlayListManager.getInstance().add(files[i]);
+                        PlayListManager.getInstance().add(new Track( files[i]));
                     }
                 }
             }
             else
             {
-                PlayListManager.getInstance().add(file);
+                PlayListManager.getInstance().add( new Track ( file ));
             }
         }
     }

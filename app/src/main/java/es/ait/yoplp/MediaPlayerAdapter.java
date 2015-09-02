@@ -2,7 +2,10 @@ package es.ait.yoplp;
 
 import android.media.MediaPlayer;
 
-import java.io.File;
+import java.io.IOException;
+
+import es.ait.yoplp.playlist.PlayListManager;
+import es.ait.yoplp.playlist.Track;
 
 /**
  * Class that manages the playback of the playlist.
@@ -29,30 +32,60 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
         return instance;
     }
 
-    public void play() throws Exception
+    /** Called when MediaPlayer is ready */
+    public void onPrepared(MediaPlayer player)
+    {
+        if ( player == actualPlayer )
+        {
+            player.start();
+        }
+        else
+        {
+            actualPlayer.setNextMediaPlayer(nextPlayer);
+        }
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp)
+    {
+        mp.release();
+        actualPlayer = nextPlayer;
+        if ( actualPlayer != null && !actualPlayer.isPlaying())
+        {
+            actualPlayer.prepareAsync();
+        }
+
+        PlayListManager<Track> plm = PlayListManager.getInstance();
+        if ( actualPlayer != null )
+        {
+            plm.next();
+            try
+            {
+                prepareNextPlayer();
+            }
+            catch ( Exception e )
+            {
+
+            }
+        }
+    }
+
+    public void play() throws IOException
     {
         if ( actualPlayer == null )
         {
-            PlayListManager<File> plm = PlayListManager.getInstance();
+            PlayListManager<Track> plm = PlayListManager.getInstance();
             if (!plm.isEmpty())
             {
-                File file = plm.next();
-                if (file != null)
+                Track track = plm.get();
+                if (track != null)
                 {
                     actualPlayer = new MediaPlayer();
-                    actualPlayer.setDataSource(file.getAbsolutePath());
+                    actualPlayer.setDataSource(track.getFile().getAbsolutePath());
                     actualPlayer.setOnCompletionListener(this);
                     actualPlayer.setOnPreparedListener( this );
                     actualPlayer.prepareAsync();
-                    File nextFile = plm.next();
-                    if ( nextFile != null )
-                    {
-                        nextPlayer = new MediaPlayer();
-                        nextPlayer.setOnPreparedListener(this);
-                        nextPlayer.setOnCompletionListener(this);
-                        nextPlayer.setDataSource(nextFile.getAbsolutePath());
-                        nextPlayer.prepareAsync();
-                    }
+                    prepareNextPlayer();
                 }
             }
         }
@@ -76,57 +109,9 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
         }
     }
 
-
-    /** Called when MediaPlayer is ready */
-    public void onPrepared(MediaPlayer player)
-    {
-        if ( player == actualPlayer )
-        {
-            player.start();
-        }
-        else
-        {
-            actualPlayer.setNextMediaPlayer( nextPlayer );
-        }
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mp)
-    {
-        mp.release();
-        actualPlayer = nextPlayer;
-        if ( actualPlayer != null && !actualPlayer.isPlaying())
-        {
-            actualPlayer.prepareAsync();
-        }
-
-        PlayListManager<File> plm = PlayListManager.getInstance();
-        File nextFile = plm.next();
-        if ( nextFile != null )
-        {
-            try
-            {
-                nextPlayer = new MediaPlayer();
-                nextPlayer.setOnPreparedListener(this);
-                nextPlayer.setOnCompletionListener(this);
-                nextPlayer.setDataSource(nextFile.getAbsolutePath());
-                nextPlayer.prepareAsync();
-            }
-            catch ( Exception e )
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void stop()
     {
-        if ( actualPlayer != null && actualPlayer.isPlaying())
-        {
-            actualPlayer.stop();
-            actualPlayer.release();
-            actualPlayer = null;
-        }
+        stopActualPlayer();
         if ( nextPlayer != null )
         {
             if ( nextPlayer.isPlaying())
@@ -135,6 +120,81 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
             }
             nextPlayer.release();
             nextPlayer = null;
+        }
+    }
+
+    public void next() throws IOException
+    {
+        PlayListManager<Track> plm = PlayListManager.getInstance();
+
+        stopActualPlayer();
+
+        if ( plm.next() )
+        {
+            if ( nextPlayer != null )
+            {
+                actualPlayer = nextPlayer;
+                actualPlayer.start();
+                prepareNextPlayer();
+            }
+            else
+            {
+                play();
+            }
+        }
+    }
+
+    public void previous() throws IOException
+    {
+        PlayListManager<Track> plm = PlayListManager.getInstance();
+        stopActualPlayer();
+        if ( plm.previous())
+        {
+            play();
+        }
+        else if ( nextPlayer != null )
+        {
+            nextPlayer.release();
+            nextPlayer = null;
+        }
+    }
+
+    /**
+     * Method that prepare the next player once the actual player it's prepared.
+     * @throws IOException
+     */
+    private void prepareNextPlayer() throws IOException
+    {
+        PlayListManager<Track> plm = PlayListManager.getInstance();
+        Track nextTrack = plm.getNext();
+        if ( nextTrack != null )
+        {
+            nextPlayer = new MediaPlayer();
+            nextPlayer.setOnPreparedListener(this);
+            nextPlayer.setOnCompletionListener(this);
+            nextPlayer.setDataSource(nextTrack.getFile().getAbsolutePath());
+            nextPlayer.prepareAsync();
+        }
+        else
+        {
+            nextPlayer = null;
+        }
+    }
+
+    /**
+     * Stop the actual player and releases it. It restores whatever state it's necessary in the adapter.
+     */
+    private void stopActualPlayer()
+    {
+        if ( actualPlayer != null )
+        {
+            if ( actualPlayer.isPlaying() || actualPlayerPaused )
+            {
+                actualPlayer.stop();
+                actualPlayerPaused = false;
+            }
+            actualPlayer.release();
+            actualPlayer = null;
         }
     }
 }

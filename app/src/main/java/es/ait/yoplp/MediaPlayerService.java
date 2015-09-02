@@ -16,7 +16,7 @@ public class MediaPlayerService extends Service
     public static final String ACTION_PAUSE = "es.ait.yoplp.PAUSE";
     public static final String ACTION_STOP = "es.ait.yoplp.STOP";
     public static final String ACTION_NEXT = "es.ait.yoplp.NEXT";
-    public static final String ACTION_PREVIOUSS = "es.ait.yoplp.PREVIOUSS";
+    public static final String ACTION_PREVIOUS = "es.ait.yoplp.PREVIOUS";
     public static final String ACTION_FIRST = "es.ait.yoplp.FIRST";
     public static final String ACTION_LAST = "es.ait.yoplp.LAST";
 
@@ -26,17 +26,43 @@ public class MediaPlayerService extends Service
 
         try
         {
-            if (intent.getAction().equals(ACTION_PLAY))
+            switch ( intent.getAction())
             {
-                MediaPlayerAdapter.getInstance().play();
-            }
-            else if (intent.getAction().equals(ACTION_PAUSE))
-            {
-                MediaPlayerAdapter.getInstance().pause();
-            }
-            else if (intent.getAction().equals(ACTION_STOP))
-            {
-                MediaPlayerAdapter.getInstance().stop();
+                case ACTION_PLAY:
+                {
+                    MediaPlayerAdapter.getInstance().play();
+                    break;
+                }
+                case ACTION_PAUSE:
+                {
+                    MediaPlayerAdapter.getInstance().pause();
+                    break;
+                }
+                case ACTION_STOP:
+                {
+                    MediaPlayerAdapter.getInstance().stop();
+                    break;
+                }
+                case ACTION_NEXT:
+                {
+                    MediaPlayerAdapter.getInstance().next();
+                    break;
+                }
+                case ACTION_PREVIOUS:
+                {
+                    MediaPlayerAdapter.getInstance().previous();
+                    break;
+                }
+                /*case ACTION_FIRST:
+                {
+                    MediaPlayerAdapter.getInstance().first();
+                    break;
+                }
+                case ACTION_LAST:
+                {
+                    MediaPlayerAdapter.getInstance().last();
+                    break;
+                }*/
             }
         }
         catch ( Exception e )

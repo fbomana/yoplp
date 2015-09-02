@@ -8,8 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.List;
+
+import es.ait.yoplp.playlist.PlayListManager;
+import es.ait.yoplp.playlist.Track;
 
 /**
  * Adapter for the ListView of the play list
@@ -23,6 +25,7 @@ public class PlayListAdapter extends ArrayAdapter<File>
 
     public View getView(int position, View convertView, ViewGroup parent)
     {
+        PlayListManager<Track> plm =  PlayListManager.getInstance();
         View view = convertView;
         if (view == null) // Comprobamos si estamos creando una vista nueva o reutilizando una que ya hay
         {
@@ -30,9 +33,17 @@ public class PlayListAdapter extends ArrayAdapter<File>
             view = inflador.inflate(R.layout.playlist_item, parent, false);
         }
 
-        ((TextView)view.findViewById( R.id.plItemNumber )).setText( String.format( "%1$4s", position + 1));
-        ((TextView)view.findViewById( R.id.plItemFileName )).setText( PlayListManager.getInstance().get( position ).getName());
-        ((TextView)view.findViewById( R.id.plItemLength )).setText("*****");
+        ((TextView)view.findViewById( R.id.plItemNumber )).setText( String.format("%1$4s", position + 1));
+        ((TextView)view.findViewById( R.id.plItemFileName )).setText(plm.get( position ).getFile().getName());
+        ((TextView)view.findViewById( R.id.plItemLength )).setText( plm.get( position ).getDuration());
+        if ( plm.get( position ).isSelected())
+        {
+            view.setBackgroundResource( R.drawable.playlist_item_selected );
+        }
+        else
+        {
+            view.setBackgroundResource( R.drawable.playlist_item );
+        }
 
         return view;
     }
