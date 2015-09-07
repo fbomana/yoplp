@@ -47,8 +47,11 @@ public class PlayList<E> extends ArrayList<E>
      */
     public boolean first()
     {
-        pointer = 0;
-        notifyPiositionChange();
+        if ( !isEmpty())
+        {
+            pointer = 0;
+            notifyPiositionChange();
+        }
         return size() > 0;
     }
 
@@ -58,7 +61,7 @@ public class PlayList<E> extends ArrayList<E>
      */
     public boolean last()
     {
-        if ( size() > 0 )
+        if ( !isEmpty() )
         {
             pointer = size() - 1;
             notifyPiositionChange();
