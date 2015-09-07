@@ -6,18 +6,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import es.ait.yoplp.fileChooser.FileChooserActivity;
 import es.ait.yoplp.playlist.PlayListInfoService;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.PlayListPositionChangeListener;
+import es.ait.yoplp.playlist.TimerService;
 import es.ait.yoplp.playlist.Track;
 
 public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener
@@ -62,10 +65,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         ListView listView = (ListView) findViewById( R.id.playListView );
         listView.setAdapter(new PlayListAdapter(this, R.id.playListView, PlayListManager.getInstance()));
 
+        TextView textView = ( TextView ) findViewById( R.id.textSongTimeLeft );
+
         if ( playListUpateReciver == null )
         {
-            playListUpateReciver = new PlayListUpdateReciver( listView );
-            IntentFilter intentFilter = new IntentFilter( PlayListInfoService.PLAYLISTINFOUPDATED );
+            playListUpateReciver = new PlayListUpdateReciver( listView, textView );
+            IntentFilter intentFilter = new IntentFilter( );
+            intentFilter.addAction( PlayListInfoService.PLAYLISTINFOUPDATED );
+            intentFilter.addAction( TimerService.INTENT_TIME_CHANGE );
             registerReceiver(playListUpateReciver, intentFilter);
         }
 
@@ -73,6 +80,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         {
             Intent updateService = new Intent("AAAAA", null, this, PlayListInfoService.class);
             startService( updateService );
+            Intent timerServie = new Intent( TimerService.ACTION_START, null, this, TimerService.class );
+            startService( timerServie );
         }
     }
 
@@ -145,12 +154,16 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 Intent intent = new Intent( MediaPlayerService.ACTION_PLAY, null, this, MediaPlayerService.class );
                 startService(intent);
+                Intent timerServie = new Intent( TimerService.ACTION_START, null, this, TimerService.class );
+                startService( timerServie );
                 break;
             }
             case R.id.stopButton:
             {
                 Intent intent = new Intent( MediaPlayerService.ACTION_STOP, null, this, MediaPlayerService.class );
                 startService( intent );
+                Intent timerServie = new Intent( TimerService.ACTION_STOP, null, this, TimerService.class );
+                startService( timerServie );
                 break;
             }
             case R.id.pauseButtopn:
@@ -178,10 +191,16 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     public void playListPositionChanged(int pointer)
     {
         ((PlayListManager<Track>)PlayListManager.getInstance()).get( seleccionado ).setSelected( false );
-        ((PlayListManager<Track>)PlayListManager.getInstance()).get( pointer ).setSelected( true );
+        ((PlayListManager<Track>)PlayListManager.getInstance()).get( pointer ).setSelected(true);
 
         (( ListView )findViewById( R.id.playListView )).invalidateViews();
         seleccionado = pointer;
+
+        Track track = (Track) PlayListManager.getInstance().get( pointer );
+        (( TextView )findViewById( R.id.textSongName )).setText( track.getTitle());
+        (( TextView )findViewById( R.id.textSongTimeLeft )).setText( track.getDuration());
+
+
     }
 
     @Override
@@ -194,24 +213,46 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             startService(intent);
             intent = new Intent( MediaPlayerService.ACTION_PLAY, null, this, MediaPlayerService.class );
             startService(intent);
+            Intent timerServie = new Intent( TimerService.ACTION_START, null, this, TimerService.class );
+            startService( timerServie );
         }
+    }
+
+    /**
+     * In this method we cleanup whatever it's still running, and save the state in order to restore it in
+     * the onResume call.
+     */
+    @Override
+    protected void onPause()
+    {
+/*        Intent timerServie = new Intent( TimerService.ACTION_STOP, null, this, TimerService.class );
+        startService( timerServie );*/
+        super.onPause();
     }
 
     class PlayListUpdateReciver extends BroadcastReceiver
     {
         private ListView listView;
+        private TextView textView;
 
-        public PlayListUpdateReciver( ListView listView )
+        public PlayListUpdateReciver( ListView listView, TextView textView )
         {
             super();
             this.listView = listView;
+            this.textView = textView;
         }
 
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            Toast.makeText(context, "Recibida la actualizacion", Toast.LENGTH_SHORT).show();
-            listView.invalidateViews();
+            if (TimerService.INTENT_TIME_CHANGE.equals(intent.getAction()) )
+            {
+                textView.setText( Utils.milisToText( intent.getIntExtra("newtime", 0)));
+            }
+            else
+            {
+                listView.invalidateViews();
+            }
         }
     }
 }

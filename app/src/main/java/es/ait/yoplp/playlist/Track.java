@@ -11,8 +11,10 @@ public class Track implements Comparable<Track>
 {
     private File file;
     private String duration;
+    private Long durationMillis;
     private String title;
     private String author;
+    private String album;
     private boolean selected;
 
     public Track( File file )
@@ -79,5 +81,25 @@ public class Track implements Comparable<Track>
             return 1;
         }
         return file.getAbsolutePath().compareTo( ((Track) another).getFile().getAbsolutePath() );
+    }
+
+    public Long getDurationMillis()
+    {
+        return durationMillis;
+    }
+
+    public void setDurationMillis(Long durationMillis)
+    {
+        this.durationMillis = durationMillis;
+    }
+
+    public String getAlbum()
+    {
+        return album;
+    }
+
+    public void setAlbum(String album)
+    {
+        this.album = album;
     }
 }

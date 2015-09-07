@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 
 import java.io.IOException;
 
+import es.ait.yoplp.Utils;
+
 /**
  * Created by aitkiar on 2/09/15.
  */
@@ -43,6 +45,7 @@ public class PlayListInfoService extends IntentService
                 retriever.setDataSource(track.getFile().getAbsolutePath());
                 track.setAuthor(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR));
                 track.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
+                track.setAlbum( retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
                 if ( track.getTitle() == null || "".equals( plm.get( i ).getTitle().trim()))
                 {
                     track.setTitle( track.getFile().getName());
@@ -56,20 +59,8 @@ public class PlayListInfoService extends IntentService
                 long durationMilis = mp.getDuration();
                 if ( durationMilis > -1 )
                 {
-                    long seconds = durationMilis / 1000;
-                    long minutes = seconds / 60;
-                    long hours = minutes / 60;
-                    minutes = minutes % 60;
-                    seconds = seconds % 60;
-
-                    if ( hours > 0 )
-                    {
-                        track.setDuration(String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds));
-                    }
-                    else
-                    {
-                        track.setDuration(String.format("%1$02d:%2$02d", minutes, seconds));
-                    }
+                    track.setDurationMillis( durationMilis );
+                    track.setDuration( Utils.milisToText( durationMilis ));
                 }
 
                 mp.release();

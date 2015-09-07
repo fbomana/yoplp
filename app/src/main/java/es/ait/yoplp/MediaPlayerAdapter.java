@@ -197,4 +197,14 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
             actualPlayer = null;
         }
     }
+
+    public MediaPlayer getActualPlayer()
+    {
+        return actualPlayer;
+    }
+
+    public MediaPlayer getNextPlayer()
+    {
+        return nextPlayer;
+    }
 }

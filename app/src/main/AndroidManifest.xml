@@ -20,6 +20,7 @@
             android:label="yoplp file chooser"/>
         <service android:name=".MediaPlayerService"/>
         <service android:name=".playlist.PlayListInfoService"/>
+        <service android:name=".playlist.TimerService"/>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
