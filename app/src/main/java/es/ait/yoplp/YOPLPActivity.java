@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,6 +99,27 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 Intent intent = new Intent(this, FileChooserActivity.class);
                 startActivity(intent);
+                break;
+            }
+            case R.id.menuClearList:
+            {
+                PlayListManager.getInstance().clear();
+                ListView listView = ( ListView )findViewById( R.id.playListView );
+                listView.invalidateViews();
+                break;
+            }
+            case R.id.menuSortList:
+            {
+                PlayListManager.getInstance().sort();
+                ListView listView = ( ListView )findViewById( R.id.playListView );
+                listView.invalidateViews();
+                break;
+            }
+            case R.id.menuRandomizeList:
+            {
+                PlayListManager.getInstance().randomize();
+                ListView listView = ( ListView )findViewById( R.id.playListView );
+                listView.invalidateViews();
                 break;
             }
             case R.id.action_settings:

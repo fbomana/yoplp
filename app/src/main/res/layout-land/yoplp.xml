@@ -9,16 +9,6 @@
             android:orientation="vertical"
             android:layout_weight="0">
             <ImageButton
-                android:id="@+id/firstButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:background="@android:color/transparent"
-                android:layout_weight="1"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:src="@drawable/first"/>
-            <ImageButton
                 android:id="@+id/previousButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,7 +17,7 @@
                 android:layout_weight="1"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:src="@drawable/previous"/>
+                android:src="@drawable/first"/>
             <ImageButton
                 android:id="@+id/playButton"
                 android:layout_width="wrap_content"
@@ -50,16 +40,6 @@
                 android:src="@drawable/pause"/>
             <ImageButton
                 android:id="@+id/nextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:background="@android:color/transparent"
-                android:layout_weight="1"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:src="@drawable/next"/>
-            <ImageButton
-                android:id="@+id/lastButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="fitCenter"

@@ -1,6 +1,7 @@
 package es.ait.yoplp.playlist;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -8,7 +9,7 @@ import java.util.Random;
  * Class that will manage out play list. It extends from array list and adds the necesary methodas to
  * navigate one entry at a time and to alter the order of the list.
  */
-public class PlayList<E> extends ArrayList<E>
+public class PlayList<E extends Comparable<E>> extends ArrayList<E>
 {
     private int pointer;
     private List<PlayListPositionChangeListener> positionListeners;
@@ -174,6 +175,14 @@ public class PlayList<E> extends ArrayList<E>
             {
                 positionListeners.get( i ).playListPositionChanged( pointer );
             }
+        }
+    }
+
+    public void sort()
+    {
+        if ( size() > 1 )
+        {
+            Collections.sort(this);
         }
     }
 }

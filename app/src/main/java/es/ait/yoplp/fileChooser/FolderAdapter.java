@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.R;
+import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.Track;
 
 /**
@@ -83,6 +83,7 @@ public class FolderAdapter extends ArrayAdapter
                 this.add( ficheros[i]);
             }
             this.notifyDataSetChanged();
+            this.selectedList.clear();
         }
         else
         {

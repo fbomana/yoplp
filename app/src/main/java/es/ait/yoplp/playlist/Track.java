@@ -7,7 +7,7 @@ import java.io.File;
  * It consist on the File object pointing to the actual file on the device filesystem and several metadata
  * recollected using MediaMetadataRetriever class.
  */
-public class Track
+public class Track implements Comparable<Track>
 {
     private File file;
     private String duration;
@@ -69,5 +69,15 @@ public class Track
     public void setSelected(boolean selected)
     {
         this.selected = selected;
+    }
+
+    @Override
+    public int compareTo(Track another)
+    {
+        if ( another == null )
+        {
+            return 1;
+        }
+        return file.getAbsolutePath().compareTo( ((Track) another).getFile().getAbsolutePath() );
     }
 }

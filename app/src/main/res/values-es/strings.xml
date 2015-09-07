@@ -8,4 +8,7 @@
     <string name="action_settings">Configuración</string>
     <string name="button_cancel">Cancelar</string>
     <string name="button_ok">Aceptar</string>
+    <string name="menuClearList">Limpiar lista de reproducción</string>
+    <string name="menuRandomizeList">Aleatorizar lista de reproducción</string>
+    <string name="menuSortList">Ordernar lista de reproducción</string>
 </resources>

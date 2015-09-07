@@ -9,16 +9,6 @@
         android:orientation="horizontal"
         android:background="@android:color/background_dark">
         <ImageButton
-            android:id="@+id/firstButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@android:drawable/ic_media_rew"/>
-        <ImageButton
             android:id="@+id/previousButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,16 +48,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:src="@android:drawable/ic_media_next"/>
-        <ImageButton
-            android:id="@+id/lastButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@android:drawable/ic_media_ff"/>
         <ImageButton
             android:id="@+id/stopButton"
             android:layout_width="wrap_content"

@@ -7,4 +7,7 @@
 
     <string name="button_ok">Ok</string>
     <string name="button_cancel">Cancel</string>
+    <string name="menuClearList">Clear Playlist</string>
+    <string name="menuRandomizeList">Randomize Playlist</string>
+    <string name="menuSortList">Sort Playlist</string>
 </resources>
