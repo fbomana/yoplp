@@ -9,11 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import es.ait.yoplp.R;
+import es.ait.yoplp.m3u.M3UReader;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.Track;
 
@@ -208,13 +210,33 @@ public class FolderAdapter extends ArrayAdapter
                     }
                     else // Avoid extra recursive calls that generate overhead
                     {
-                        PlayListManager.getInstance().add(new Track( files[i]));
+                        if ( "m3u".equals( files[i].getName().substring( files[i].getName().lastIndexOf(".") + 1 )))
+                        {
+                            // Avoid reading m3u files in a directory
+                        }
+                        else
+                        {
+                            PlayListManager.getInstance().add(new Track(files[i]));
+                        }
                     }
                 }
             }
             else
             {
-                PlayListManager.getInstance().add( new Track ( file ));
+                if ( "m3u".equals( file.getName().substring( file.getName().lastIndexOf(".") + 1 )))
+                {
+                    try
+                    {
+                        PlayListManager.getInstance().addAll(M3UReader.getInstance( file ).parse());
+                    }
+                    catch ( IOException e )
+                    {
+                    }
+                }
+                else
+                {
+                    PlayListManager.getInstance().add(new Track(file));
+                }
             }
         }
     }

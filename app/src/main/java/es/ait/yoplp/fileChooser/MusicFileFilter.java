@@ -10,11 +10,11 @@ import java.util.Arrays;
  */
 public class MusicFileFilter implements FileFilter
 {
-    private String[] supportedExtensions = { "3gp", "aac", "flac", "imy", "m4a", "mid", "mkv", "mp3", "mp4", "mxmf", "ogg", "ota", "rtttl", "rtx", "wav", "xmf" };
+    private String[] supportedExtensions = { "3gp", "aac", "flac", "imy", "m3u", "m4a", "mid", "mkv", "mp3", "mp4", "mxmf", "ogg", "ota", "rtttl", "rtx", "wav", "xmf" };
 
     @Override
     public boolean accept(File file)
     {
-        return (file.isDirectory() || Arrays.binarySearch( supportedExtensions, file.getName().substring(file.getName().lastIndexOf(".") + 1)) >= 0 ) && file.canRead();
+        return (file.isDirectory() || Arrays.binarySearch( supportedExtensions, file.getName().substring(file.getName().lastIndexOf(".") + 1).toLowerCase()) >= 0 ) && file.canRead();
     }
 }

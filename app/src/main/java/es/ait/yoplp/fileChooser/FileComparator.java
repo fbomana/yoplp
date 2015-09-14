@@ -23,7 +23,7 @@ public class FileComparator implements Comparator<File>
         else
         {
             // both file are the same type
-            return file1.getName().compareTo(file2.getName());
+            return file1.getName().toUpperCase().compareTo(file2.getName().toUpperCase());
         }
     }
 }
