@@ -42,11 +42,17 @@ public class PlayListInfoService extends IntentService
         PlayListManager<Track> plm = PlayListManager.getInstance();
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         Track track;
+        long trackInfoTime = 0;
+        long trackDurationTime = 0;
+        long t1 = 0;
+        long t2 = 0;
+        long t3 = 0;
         Log.i("[YOPLP]", "---------- Inicio ---------");
         Log.i("[YOPLP]", System.currentTimeMillis() + "" );
         for ( int i = 0; i < plm.size();i ++ )
         {
             track = plm.get( i );
+            t1 = System.currentTimeMillis();
             if ( track.getDuration() == null )
             {
                 if ( track.getFile().getName().toLowerCase().endsWith(".mp3"))
@@ -61,21 +67,12 @@ public class PlayListInfoService extends IntentService
                             track.setAuthor( id3v1.getArtist());
                             track.setAlbum( id3v1.getAlbum());
                         }
-                        if ( mp3file.hasId3v2Tag())
+                        else if ( mp3file.hasId3v2Tag())
                         {
                             ID3v2 id3v2 = mp3file.getId3v2Tag();
-                            if ( track.getTitle() == null || "".equals( track.getTitle().trim()))
-                            {
-                                track.setTitle( id3v2.getTitle());
-                            }
-                            if ( track.getAuthor() == null || "".equals( track.getAuthor().trim()))
-                            {
-                                track.setAuthor( id3v2.getArtist());
-                            }
-                            if ( track.getAlbum() == null || "".equals( track.getAlbum().trim()))
-                            {
-                                track.setAlbum(id3v2.getAlbum());
-                            }
+                            track.setTitle( id3v2.getTitle());
+                            track.setAuthor( id3v2.getArtist());
+                            track.setAlbum(id3v2.getAlbum());
                         }
                         track.setDurationMillis( mp3file.getLengthInMilliseconds() );
                         track.setDuration( Utils.milisToText( mp3file.getLengthInMilliseconds()));
@@ -97,6 +94,7 @@ public class PlayListInfoService extends IntentService
                     track.setTitle(track.getFile().getName());
                 }
             }
+            t2 = System.currentTimeMillis();
             if ( track.getDurationMillis() == 0 )
             {
                 try
@@ -117,8 +115,14 @@ public class PlayListInfoService extends IntentService
                 {
                 }
             }
+            t3 = System.currentTimeMillis();
+            trackInfoTime += ( t2 - t1 );
+            trackDurationTime += ( t3 - t2 );
         }
-        Log.i("[YOPLP]", System.currentTimeMillis() + "" );
+
+        Log.i("[YOPLP]", "TrackInfoTime=" + trackInfoTime);
+        Log.i("[YOPLP]", "TrackDurationTime=" + trackDurationTime );
+        Log.i("[YOPLP]", "TotalTime=" + System.currentTimeMillis() );
         Log.i("[YOPLP]", "---------- Fin ---------");
         Intent message = new Intent( PlayListInfoService.PLAYLISTINFOUPDATED );
         sendBroadcast( message );
