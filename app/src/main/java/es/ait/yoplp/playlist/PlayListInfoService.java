@@ -60,22 +60,22 @@ public class PlayListInfoService extends IntentService
                     try
                     {
                         Mp3File mp3file = new Mp3File(track.getFile().getAbsolutePath());
-                        if ( mp3file.hasId3v1Tag())
-                        {
-                            ID3v1 id3v1 = mp3file.getId3v1Tag();
-                            track.setTitle( id3v1.getTitle());
-                            track.setAuthor( id3v1.getArtist());
-                            track.setAlbum( id3v1.getAlbum());
-                        }
-                        else if ( mp3file.hasId3v2Tag())
+                        if ( mp3file.hasId3v2Tag())
                         {
                             ID3v2 id3v2 = mp3file.getId3v2Tag();
                             track.setTitle( id3v2.getTitle());
                             track.setAuthor( id3v2.getArtist());
                             track.setAlbum(id3v2.getAlbum());
                         }
-                        track.setDurationMillis( mp3file.getLengthInMilliseconds() );
-                        track.setDuration( Utils.milisToText( mp3file.getLengthInMilliseconds()));
+                        else if ( mp3file.hasId3v1Tag())
+                        {
+                            ID3v1 id3v1 = mp3file.getId3v1Tag();
+                            track.setTitle( id3v1.getTitle());
+                            track.setAuthor( id3v1.getArtist());
+                            track.setAlbum( id3v1.getAlbum());
+                        }
+//                        track.setDurationMillis( mp3file.getLengthInMilliseconds() );
+//                        track.setDuration( Utils.milisToText( mp3file.getLengthInMilliseconds()));
                     }
                     catch ( Exception e )
                     {
