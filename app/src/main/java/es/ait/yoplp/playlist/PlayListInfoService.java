@@ -10,10 +10,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 
-import com.mpatric.mp3agic.ID3v1;
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.Mp3File;
-
 import java.io.IOException;
 
 import es.ait.yoplp.Utils;
@@ -55,43 +51,25 @@ public class PlayListInfoService extends IntentService
             t1 = System.currentTimeMillis();
             if ( track.getDuration() == null )
             {
-                if ( track.getFile().getName().toLowerCase().endsWith(".mp3"))
-                {
-                    try
-                    {
-                        Mp3File mp3file = new Mp3File(track.getFile().getAbsolutePath());
-                        if ( mp3file.hasId3v2Tag())
-                        {
-                            ID3v2 id3v2 = mp3file.getId3v2Tag();
-                            track.setTitle( id3v2.getTitle());
-                            track.setAuthor( id3v2.getArtist());
-                            track.setAlbum(id3v2.getAlbum());
-                        }
-                        else if ( mp3file.hasId3v1Tag())
-                        {
-                            ID3v1 id3v1 = mp3file.getId3v1Tag();
-                            track.setTitle( id3v1.getTitle());
-                            track.setAuthor( id3v1.getArtist());
-                            track.setAlbum( id3v1.getAlbum());
-                        }
-//                        track.setDurationMillis( mp3file.getLengthInMilliseconds() );
-//                        track.setDuration( Utils.milisToText( mp3file.getLengthInMilliseconds()));
-                    }
-                    catch ( Exception e )
-                    {
-                        Log.e("[YOPLP]", "Error al parsear el fichero: " + track.getFile().getName(), e );
-                    }
-                }
+                retriever.setDataSource(track.getFile().getAbsolutePath());
+                track.setAuthor(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR));
+                track.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
+                track.setAlbum( retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
                 if ( track.getTitle() == null || "".equals( plm.get( i ).getTitle().trim()))
                 {
-                    retriever.setDataSource(track.getFile().getAbsolutePath());
-                    track.setAuthor(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR));
-                    track.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-                    track.setAlbum(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+                    track.setTitle( track.getFile().getName());
                 }
-                if ( track.getTitle() == null || "".equals( plm.get( i ).getTitle().trim()))
+                long duration = 0;
+                try
                 {
-                    track.setTitle(track.getFile().getName());
+                    duration = Long.parseLong( retriever.extractMetadata( MediaMetadataRetriever.METADATA_KEY_DURATION ));
+                    track.setDurationMillis( duration );
+                    track.setDuration(Utils.milisToText(duration));
+
+                }
+                catch ( Exception e )
+                {
+
                 }
             }
             t2 = System.currentTimeMillis();
@@ -99,19 +77,18 @@ public class PlayListInfoService extends IntentService
             {
                 try
                 {
-                        MediaPlayer mp = new MediaPlayer();
-                        mp.setDataSource(track.getFile().getAbsolutePath());
-                        mp.prepare();
-                        long durationMilis = mp.getDuration();
-                        if (durationMilis > -1)
-                        {
-                            track.setDurationMillis(durationMilis);
-                            track.setDuration(Utils.milisToText(durationMilis));
-                        }
+                    MediaPlayer mp = new MediaPlayer();
+                    mp.setDataSource(track.getFile().getAbsolutePath());
+                    mp.prepare();
+                    long durationMilis = mp.getDuration();
+                    if (durationMilis > -1)
+                    {
+                        track.setDurationMillis(durationMilis);
+                        track.setDuration(Utils.milisToText(durationMilis));
+                    }
 
-                        mp.release();
-                }
-                catch ( IOException e )
+                    mp.release();
+                } catch (IOException e)
                 {
                 }
             }
@@ -125,6 +102,6 @@ public class PlayListInfoService extends IntentService
         Log.i("[YOPLP]", "TotalTime=" + System.currentTimeMillis() );
         Log.i("[YOPLP]", "---------- Fin ---------");
         Intent message = new Intent( PlayListInfoService.PLAYLISTINFOUPDATED );
-        sendBroadcast( message );
+        sendBroadcast(message);
     }
 }
