@@ -59,24 +59,38 @@ public class PlayListInfoService extends IntentService
                 {
                     track.setTitle( track.getFile().getName());
                 }
+                long duration = 0;
+                try
+                {
+                    duration = Long.parseLong( retriever.extractMetadata( MediaMetadataRetriever.METADATA_KEY_DURATION ));
+                    track.setDurationMillis( duration );
+                    track.setDuration(Utils.milisToText(duration));
+
+                }
+                catch ( Exception e )
+                {
+
+                }
             }
             t2 = System.currentTimeMillis();
-            try
+            if ( track.getDurationMillis() == 0 )
             {
-                MediaPlayer mp = new MediaPlayer();
-                mp.setDataSource(track.getFile().getAbsolutePath());
-                mp.prepare();
-                long durationMilis = mp.getDuration();
-                if ( durationMilis > -1 )
+                try
                 {
-                    track.setDurationMillis( durationMilis );
-                    track.setDuration( Utils.milisToText( durationMilis ));
-                }
+                    MediaPlayer mp = new MediaPlayer();
+                    mp.setDataSource(track.getFile().getAbsolutePath());
+                    mp.prepare();
+                    long durationMilis = mp.getDuration();
+                    if (durationMilis > -1)
+                    {
+                        track.setDurationMillis(durationMilis);
+                        track.setDuration(Utils.milisToText(durationMilis));
+                    }
 
-                mp.release();
-            }
-            catch ( IOException e )
-            {
+                    mp.release();
+                } catch (IOException e)
+                {
+                }
             }
             t3 = System.currentTimeMillis();
             trackInfoTime += ( t2 - t1 );
@@ -88,6 +102,6 @@ public class PlayListInfoService extends IntentService
         Log.i("[YOPLP]", "TotalTime=" + System.currentTimeMillis() );
         Log.i("[YOPLP]", "---------- Fin ---------");
         Intent message = new Intent( PlayListInfoService.PLAYLISTINFOUPDATED );
-        sendBroadcast( message );
+        sendBroadcast(message);
     }
 }
