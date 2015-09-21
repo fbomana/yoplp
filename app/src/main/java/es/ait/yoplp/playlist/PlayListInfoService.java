@@ -1,21 +1,17 @@
 package es.ait.yoplp.playlist;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 
 import java.io.IOException;
 
 import es.ait.yoplp.Utils;
 
 /**
- * Created by aitkiar on 2/09/15.
+ * This service it's used to obtain metadata from the tracks on the playlist. When finished it sends
+ * a broadcast with the tag PlayListInfoService.PLAYLISTINFOUPDATED.
  */
 public class PlayListInfoService extends IntentService
 {
@@ -38,17 +34,9 @@ public class PlayListInfoService extends IntentService
         PlayListManager<Track> plm = PlayListManager.getInstance();
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         Track track;
-        long trackInfoTime = 0;
-        long trackDurationTime = 0;
-        long t1 = 0;
-        long t2 = 0;
-        long t3 = 0;
-        Log.i("[YOPLP]", "---------- Inicio ---------");
-        Log.i("[YOPLP]", System.currentTimeMillis() + "" );
         for ( int i = 0; i < plm.size();i ++ )
         {
             track = plm.get( i );
-            t1 = System.currentTimeMillis();
             if ( track.getDuration() == null )
             {
                 retriever.setDataSource(track.getFile().getAbsolutePath());
@@ -72,7 +60,6 @@ public class PlayListInfoService extends IntentService
 
                 }
             }
-            t2 = System.currentTimeMillis();
             if ( track.getDurationMillis() == 0 )
             {
                 try
@@ -92,15 +79,8 @@ public class PlayListInfoService extends IntentService
                 {
                 }
             }
-            t3 = System.currentTimeMillis();
-            trackInfoTime += ( t2 - t1 );
-            trackDurationTime += ( t3 - t2 );
         }
 
-        Log.i("[YOPLP]", "TrackInfoTime=" + trackInfoTime);
-        Log.i("[YOPLP]", "TrackDurationTime=" + trackDurationTime );
-        Log.i("[YOPLP]", "TotalTime=" + System.currentTimeMillis() );
-        Log.i("[YOPLP]", "---------- Fin ---------");
         Intent message = new Intent( PlayListInfoService.PLAYLISTINFOUPDATED );
         sendBroadcast(message);
     }
