@@ -7,6 +7,7 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 
 import java.io.IOException;
@@ -37,6 +38,8 @@ public class PlayListInfoService extends IntentService
         PlayListManager<Track> plm = PlayListManager.getInstance();
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         Track track;
+        Log.i("[YOPLP]", "---------- Inicio ---------");
+        Log.i("[YOPLP]", System.currentTimeMillis() + "" );
         for ( int i = 0; i < plm.size();i ++ )
         {
             track = plm.get( i );
@@ -69,7 +72,8 @@ public class PlayListInfoService extends IntentService
             {
             }
         }
-
+        Log.i("[YOPLP]", System.currentTimeMillis() + "" );
+        Log.i("[YOPLP]", "---------- Fin ---------");
         Intent message = new Intent( PlayListInfoService.PLAYLISTINFOUPDATED );
         sendBroadcast( message );
     }
