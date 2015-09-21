@@ -38,11 +38,17 @@ public class PlayListInfoService extends IntentService
         PlayListManager<Track> plm = PlayListManager.getInstance();
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         Track track;
+        long trackInfoTime = 0;
+        long trackDurationTime = 0;
+        long t1 = 0;
+        long t2 = 0;
+        long t3 = 0;
         Log.i("[YOPLP]", "---------- Inicio ---------");
         Log.i("[YOPLP]", System.currentTimeMillis() + "" );
         for ( int i = 0; i < plm.size();i ++ )
         {
             track = plm.get( i );
+            t1 = System.currentTimeMillis();
             if ( track.getDuration() == null )
             {
                 retriever.setDataSource(track.getFile().getAbsolutePath());
@@ -54,6 +60,7 @@ public class PlayListInfoService extends IntentService
                     track.setTitle( track.getFile().getName());
                 }
             }
+            t2 = System.currentTimeMillis();
             try
             {
                 MediaPlayer mp = new MediaPlayer();
@@ -71,8 +78,14 @@ public class PlayListInfoService extends IntentService
             catch ( IOException e )
             {
             }
+            t3 = System.currentTimeMillis();
+            trackInfoTime += ( t2 - t1 );
+            trackDurationTime += ( t3 - t2 );
         }
-        Log.i("[YOPLP]", System.currentTimeMillis() + "" );
+
+        Log.i("[YOPLP]", "TrackInfoTime=" + trackInfoTime);
+        Log.i("[YOPLP]", "TrackDurationTime=" + trackDurationTime );
+        Log.i("[YOPLP]", "TotalTime=" + System.currentTimeMillis() );
         Log.i("[YOPLP]", "---------- Fin ---------");
         Intent message = new Intent( PlayListInfoService.PLAYLISTINFOUPDATED );
         sendBroadcast( message );
