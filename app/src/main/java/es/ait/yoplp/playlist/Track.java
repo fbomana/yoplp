@@ -11,7 +11,7 @@ public class Track implements Comparable<Track>
 {
     private File file;
     private String duration;
-    private Long durationMillis;
+    private Long durationMillis = 0l;
     private String title;
     private String author;
     private String album;
@@ -21,6 +21,7 @@ public class Track implements Comparable<Track>
     {
         this.file = file;
         this.setSelected(false);
+        this.durationMillis = 0l;
     }
 
     public File getFile()
