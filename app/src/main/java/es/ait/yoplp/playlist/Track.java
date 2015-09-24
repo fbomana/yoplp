@@ -103,4 +103,11 @@ public class Track implements Comparable<Track>
     {
         this.album = album;
     }
+
+    public String toM3U()
+    {
+        return "#EXTINF:" + ( getDurationMillis() / 1000 ) + "," + (
+            getTitle() != null ? getTitle() : getFile().getName().substring(0, getFile().getName().lastIndexOf("."))) + "\n" +
+            getFile().getAbsolutePath() + "\n";
+    }
 }
