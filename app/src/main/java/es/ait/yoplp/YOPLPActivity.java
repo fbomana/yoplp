@@ -14,9 +14,12 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.io.File;
 
 import es.ait.yoplp.fileChooser.FileChooserActivity;
+import es.ait.yoplp.m3u.M3UReader;
+import es.ait.yoplp.m3u.M3UWriter;
 import es.ait.yoplp.playlist.PlayListInfoService;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.PlayListPositionChangeListener;
@@ -52,6 +55,31 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
 
         ListView listView = ( ListView )findViewById( R.id.playListView );
         listView.setOnItemClickListener( this );
+
+
+        if ( PlayListManager.getInstance().isEmpty())
+        {
+            try
+            {
+                File file = new File(getBaseContext().getFilesDir(), "yoplpsavedplaylist.m3u");
+                if ( file.exists() )
+                {
+                    Log.i("[YOPLP]", "Reading last playlist from internal storage");
+                    PlayListManager.getInstance().addAll(M3UReader.getInstance(file).parse());
+                    file.delete();
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.e("[YOPLP]", "Error while reading last playlist from internal storage", e );
+            }
+        }
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
     }
 
     /**
@@ -78,10 +106,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
 
         if ( !PlayListManager.getInstance().isEmpty() )
         {
-            Intent updateService = new Intent("AAAAA", null, this, PlayListInfoService.class);
-            startService( updateService );
-            Intent timerServie = new Intent( TimerService.ACTION_START, null, this, TimerService.class );
-            startService( timerServie );
+            playListInfoServiceStart();
+            timerServiceStart();
         }
     }
 
@@ -112,6 +138,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             }
             case R.id.menuClearList:
             {
+                playListInfoServiceKill();
                 PlayListManager.getInstance().clear();
                 ListView listView = ( ListView )findViewById( R.id.playListView );
                 listView.invalidateViews();
@@ -119,14 +146,18 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             }
             case R.id.menuSortList:
             {
+                playListInfoServiceKill();
                 PlayListManager.getInstance().sort();
+                playListInfoServiceStart();
                 ListView listView = ( ListView )findViewById( R.id.playListView );
                 listView.invalidateViews();
                 break;
             }
             case R.id.menuRandomizeList:
             {
+                playListInfoServiceKill();
                 PlayListManager.getInstance().randomize();
+                playListInfoServiceStart();
                 ListView listView = ( ListView )findViewById( R.id.playListView );
                 listView.invalidateViews();
                 break;
@@ -154,16 +185,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 Intent intent = new Intent( MediaPlayerService.ACTION_PLAY, null, this, MediaPlayerService.class );
                 startService(intent);
-                Intent timerServie = new Intent( TimerService.ACTION_START, null, this, TimerService.class );
-                startService( timerServie );
+                timerServiceStart();
                 break;
             }
             case R.id.stopButton:
             {
                 Intent intent = new Intent( MediaPlayerService.ACTION_STOP, null, this, MediaPlayerService.class );
                 startService( intent );
-                Intent timerServie = new Intent( TimerService.ACTION_STOP, null, this, TimerService.class );
-                startService( timerServie );
+                timerServiceStop();
                 break;
             }
             case R.id.pauseButtopn:
@@ -213,8 +242,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             startService(intent);
             intent = new Intent( MediaPlayerService.ACTION_PLAY, null, this, MediaPlayerService.class );
             startService(intent);
-            Intent timerServie = new Intent( TimerService.ACTION_START, null, this, TimerService.class );
-            startService( timerServie );
+            timerServiceStart();
         }
     }
 
@@ -225,8 +253,20 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onPause()
     {
-/*        Intent timerServie = new Intent( TimerService.ACTION_STOP, null, this, TimerService.class );
-        startService( timerServie );*/
+        timerServiceStop();
+        if ( !PlayListManager.getInstance().isEmpty())
+        {
+            Log.i("[YOPLP]", "Writing playlist to internal storage");
+            File file = new File(getBaseContext().getFilesDir(), "yoplpsavedplaylist.m3u");
+            try
+            {
+                M3UWriter.getInstance( file ).write( PlayListManager.getInstance());
+            }
+            catch ( Exception e )
+            {
+                Log.e("[YOPLP]", "Error while writing last playlist to internal storage", e );
+            }
+        }
         super.onPause();
     }
 
@@ -254,5 +294,32 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 listView.invalidateViews();
             }
         }
+    }
+
+    /*
+     ++++++++++++++++++++ Service control +++++++++++++++++++++++++++++++++++++
+     */
+    private void timerServiceStart()
+    {
+        Intent timerServie = new Intent( TimerService.ACTION_START, null, this, TimerService.class );
+        startService( timerServie );
+    }
+
+    private void timerServiceStop()
+    {
+        Intent timerServie = new Intent( TimerService.ACTION_STOP, null, this, TimerService.class );
+        startService( timerServie );
+    }
+
+    private void playListInfoServiceStart()
+    {
+        Intent updateService = new Intent("AAAAA", null, this, PlayListInfoService.class);
+        startService( updateService );
+    }
+
+    private void playListInfoServiceKill()
+    {
+        Intent updateService = new Intent("AAAAA", null, this, PlayListInfoService.class);
+        stopService( updateService );
     }
 }

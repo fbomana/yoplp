@@ -31,57 +31,63 @@ public class PlayListInfoService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        PlayListManager<Track> plm = PlayListManager.getInstance();
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        Track track;
-        for ( int i = 0; i < plm.size();i ++ )
-        {
-            track = plm.get( i );
-            if ( track.getDuration() == null )
+//        try
+//        {
+            PlayListManager<Track> plm = PlayListManager.getInstance();
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            Track track;
+            for (int i = 0; i < plm.size(); i++)
             {
-                retriever.setDataSource(track.getFile().getAbsolutePath());
-                track.setAuthor(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR));
-                track.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-                track.setAlbum( retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-                if ( track.getTitle() == null || "".equals( plm.get( i ).getTitle().trim()))
+                track = plm.get(i);
+                if (track.getDuration() == null)
                 {
-                    track.setTitle( track.getFile().getName());
-                }
-                long duration = 0;
-                try
-                {
-                    duration = Long.parseLong( retriever.extractMetadata( MediaMetadataRetriever.METADATA_KEY_DURATION ));
-                    track.setDurationMillis( duration );
-                    track.setDuration(Utils.milisToText(duration));
-
-                }
-                catch ( Exception e )
-                {
-
-                }
-            }
-            if ( track.getDurationMillis() == 0 )
-            {
-                try
-                {
-                    MediaPlayer mp = new MediaPlayer();
-                    mp.setDataSource(track.getFile().getAbsolutePath());
-                    mp.prepare();
-                    long durationMilis = mp.getDuration();
-                    if (durationMilis > -1)
+                    retriever.setDataSource(track.getFile().getAbsolutePath());
+                    track.setAuthor(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR));
+                    track.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
+                    track.setAlbum(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+                    if (track.getTitle() == null || "".equals(track.getTitle().trim()))
                     {
-                        track.setDurationMillis(durationMilis);
-                        track.setDuration(Utils.milisToText(durationMilis));
+                        track.setTitle(track.getFile().getName());
                     }
+                    long duration = 0;
+                    try
+                    {
+                        duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                        track.setDurationMillis(duration);
+                        track.setDuration(Utils.milisToText(duration));
 
-                    mp.release();
-                } catch (IOException e)
+                    } catch (Exception e)
+                    {
+
+                    }
+                }
+                if (track.getDurationMillis() == 0)
                 {
+                    try
+                    {
+                        MediaPlayer mp = new MediaPlayer();
+                        mp.setDataSource(track.getFile().getAbsolutePath());
+                        mp.prepare();
+                        long durationMilis = mp.getDuration();
+                        if (durationMilis > -1)
+                        {
+                            track.setDurationMillis(durationMilis);
+                            track.setDuration(Utils.milisToText(durationMilis));
+                        }
+
+                        mp.release();
+                    } catch (IOException e)
+                    {
+                    }
                 }
             }
-        }
 
-        Intent message = new Intent( PlayListInfoService.PLAYLISTINFOUPDATED );
-        sendBroadcast(message);
+            Intent message = new Intent(PlayListInfoService.PLAYLISTINFOUPDATED);
+            sendBroadcast(message);
+//        }
+//        catch ( Exception e )
+//        {
+//            Log.e("[YOPLP]","Error al obtener información de la playlist", e );
+//        }
     }
 }
