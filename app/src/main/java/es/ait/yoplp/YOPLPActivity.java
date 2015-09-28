@@ -31,8 +31,10 @@ import es.ait.yoplp.playlist.Track;
 
 public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener
 {
-    public int seleccionado = 0;
-    PlayListUpdateReciver playListUpateReciver;
+    private int seleccionado = 0;
+    private TextView textSongAlbum;
+    private TextView textSongAuthor;
+    private PlayListUpdateReciver playListUpateReciver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,6 +61,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         ListView listView = ( ListView )findViewById( R.id.playListView );
         listView.setOnItemClickListener( this );
 
+        textSongAlbum = ( TextView )findViewById( R.id.textSongAlbum );
+        textSongAuthor = ( TextView )findViewById( R.id.textSongAuthor );
 
         if ( PlayListManager.getInstance().isEmpty())
         {
@@ -230,7 +234,15 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
 
         Track track = (Track) PlayListManager.getInstance().get( pointer );
         (( TextView )findViewById( R.id.textSongName )).setText( track.getTitle());
-        (( TextView )findViewById( R.id.textSongTimeLeft )).setText( track.getDuration());
+        (( TextView )findViewById( R.id.textSongTimeLeft )).setText(track.getDuration());
+        if ( textSongAlbum != null )
+        {
+            textSongAlbum.setText( track.getAlbum() );
+        }
+        if ( textSongAuthor != null )
+        {
+            textSongAuthor.setText( track.getAuthor());
+        }
 
 
     }

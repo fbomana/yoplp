@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 
 import java.io.IOException;
 
+import es.ait.yoplp.playlist.PlayListInfoService;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.Track;
 
@@ -83,7 +84,7 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
                     actualPlayer = new MediaPlayer();
                     actualPlayer.setDataSource(track.getFile().getAbsolutePath());
                     actualPlayer.setOnCompletionListener(this);
-                    actualPlayer.setOnPreparedListener( this );
+                    actualPlayer.setOnPreparedListener(this);
                     actualPlayer.prepareAsync();
                     prepareNextPlayer();
                 }

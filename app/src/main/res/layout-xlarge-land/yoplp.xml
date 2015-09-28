@@ -80,8 +80,60 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:singleLine="false"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:text="Esto es un ejemplo de título de canción demasiado largo"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="@dimen/abc_text_size_headline_material"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="20dp"
+                android:layout_height="2dp"/>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:layout_weight="1"
+                android:background="@android:color/darker_gray"/>
+            <View
+                android:layout_width="20dp"
+                android:layout_height="2dp"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/textSongAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="Album"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="@dimen/abc_text_size_headline_material"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <View
+            android:layout_width="20dp"
+            android:layout_height="2dp"/>
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"/>
+        <View
+            android:layout_width="20dp"
+            android:layout_height="2dp"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/textSongAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="Author"
             android:textColor="@android:color/primary_text_dark"
             android:textSize="@dimen/abc_text_size_headline_material"/>
     </LinearLayout>
