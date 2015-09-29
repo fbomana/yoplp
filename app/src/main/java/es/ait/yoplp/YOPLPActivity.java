@@ -236,8 +236,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void playListPositionChanged(int pointer)
     {
-        ((PlayListManager<Track>)PlayListManager.getInstance()).get( seleccionado ).setSelected( false );
-        ((PlayListManager<Track>)PlayListManager.getInstance()).get( pointer ).setSelected(true);
+        ((PlayListManager<Track>)PlayListManager.getInstance()).get( seleccionado ).setPlaying( false );
+        ((PlayListManager<Track>)PlayListManager.getInstance()).get( pointer ).setPlaying( true );
 
         (( ListView )findViewById( R.id.playListView )).invalidateViews();
         seleccionado = pointer;

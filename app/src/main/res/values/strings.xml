@@ -11,5 +11,7 @@
     <string name="menuRandomizeList">Randomize Playlist</string>
     <string name="menuSortList">Sort Playlist</string>
     <string name="button_selection_mode">Selecction Mode</string>
+    <string name="selectionModeOn">S.Mode On </string>
+    <string name="selectionModeOff">S.Mode Off</string>
 
 </resources>

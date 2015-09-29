@@ -16,11 +16,13 @@ public class Track implements Comparable<Track>
     private String author;
     private String album;
     private boolean selected;
+    private boolean playing;
 
     public Track( File file )
     {
         this.file = file;
         this.setSelected(false);
+        this.setPlaying( false );
         this.durationMillis = 0l;
     }
 
@@ -73,6 +75,17 @@ public class Track implements Comparable<Track>
     {
         this.selected = selected;
     }
+
+    public boolean isPlaying()
+    {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing)
+    {
+        this.playing = playing;
+    }
+
 
     @Override
     public int compareTo(Track another)

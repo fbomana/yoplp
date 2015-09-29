@@ -78,7 +78,7 @@
                     android:background="@android:color/transparent"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:src="@android:drawable/ic_delete"/>
+                    android:src="@drawable/ic_media_stop"/>
             </LinearLayout>
             <TextView
                 android:id="@+id/textSongName"
@@ -102,7 +102,42 @@
     <ListView
         android:id="@+id/playListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
     </ListView>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:background="@android:color/background_dark">
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="@string/selectionModeOn"
+            android:textOff="@string/selectionModeOff"
+            android:id="@+id/buttonSelecctionMode"
+            android:textColor="@android:color/primary_text_dark"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/buttonUp"
+            android:src="@android:drawable/arrow_up_float"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/buttonDown"
+            android:src="@android:drawable/arrow_down_float"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/buttonDelete"
+            android:src="@android:drawable/ic_menu_delete"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
 </LinearLayout>

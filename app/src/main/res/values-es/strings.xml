@@ -12,4 +12,6 @@
     <string name="menuRandomizeList">Aleatorizar lista de reproducción</string>
     <string name="menuSortList">Ordernar lista de reproducción</string>
     <string name="button_selection_mode">Modo Selección</string>
+    <string name="selectionModeOn">S.Mode On </string>
+    <string name="selectionModeOff">S.Mode Off</string>
 </resources>
