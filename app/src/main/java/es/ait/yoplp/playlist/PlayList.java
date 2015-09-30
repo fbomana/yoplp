@@ -1,5 +1,7 @@
 package es.ait.yoplp.playlist;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -184,5 +186,106 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
         {
             Collections.sort(this);
         }
+    }
+
+    /**
+     * Removes the selected attribute from all Tracks
+     */
+    public void deSelectAll()
+    {
+        for ( int i = 0; i < size(); i ++ )
+        {
+            (( Track )get(i)).setSelected( false );
+        }
+    }
+
+    /**
+     * Move all seleceted tracks a position up in the list and updates the pointer so it points
+     * to the right track.
+     */
+    public void moveSelectedUp()
+    {
+        for ( int i = 1; i < size(); i ++ )
+        {
+            if ( ((Track)get(i)).isSelected() && !((Track)get(i -1)).isSelected())
+            {
+                if ( pointer > 0 && ((Track)get(pointer)).isSelected())
+                {
+                    pointer --;
+                }
+                else if ( pointer + 1 < size() && ((Track)get(pointer + 1)).isSelected())
+                {
+                    pointer ++;
+                }
+                swap( i - 1, i );
+            }
+        }
+    }
+
+    /**
+     * Move all selected tracks a position down in the list and updates the pointer so it still points
+     * to the right track.
+     */
+    public void moveSelectedDown()
+    {
+        for ( int i = size() -2; i >= 0; i -- )
+        {
+            if ( ((Track)get(i)).isSelected() && !((Track)get(i + 1)).isSelected())
+            {
+                if ( pointer < size() -1 && ((Track)get(pointer)).isSelected())
+                {
+                    pointer ++;
+                }
+                else if ( pointer > 0 && ((Track)get(pointer - 1)).isSelected())
+                {
+                    pointer --;
+                }
+                swap( i + 1, i );
+            }
+        }
+    }
+
+    /**
+     * Remove all selected tracks in the list.
+     */
+    public void removeSelected()
+    {
+        int i = 0;
+        while ( i < size() )
+        {
+            if ( ((Track)get(i)).isSelected() )
+            {
+                if ( i < pointer )
+                {
+                    pointer --;
+                }
+                remove( i );
+            }
+            else
+            {
+                i++;
+            }
+        }
+        if ( pointer == size() && !isEmpty())
+        {
+            pointer --;
+        }
+    }
+
+    /**
+     * finds the next unselected position
+     * @param position
+     * @return
+     */
+    public int findNextUnselected( int position )
+    {
+        for ( int i = position + 1; i < size(); i ++ )
+        {
+            if (!(( Track )get( i )).isSelected())
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }

@@ -76,6 +76,11 @@ public class Track implements Comparable<Track>
         this.selected = selected;
     }
 
+    public void toggleSelected()
+    {
+        this.selected = !this.selected;
+    }
+
     public boolean isPlaying()
     {
         return playing;

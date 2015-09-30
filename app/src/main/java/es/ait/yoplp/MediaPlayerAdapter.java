@@ -19,7 +19,7 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
     private MediaPlayer nextPlayer;
     private boolean actualPlayerPaused;
 
-    public MediaPlayerAdapter()
+    private MediaPlayerAdapter()
     {
         actualPlayerPaused = false;
     }
@@ -42,7 +42,10 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
         }
         else
         {
-            actualPlayer.setNextMediaPlayer(nextPlayer);
+            if ( actualPlayer != null )
+            {
+                actualPlayer.setNextMediaPlayer(nextPlayer);
+            }
         }
     }
 
@@ -179,6 +182,7 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
         else
         {
             nextPlayer = null;
+            actualPlayer.setNextMediaPlayer( null );
         }
     }
 
@@ -207,5 +211,13 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
     public MediaPlayer getNextPlayer()
     {
         return nextPlayer;
+    }
+
+    public void refreshNextPlayer() throws IOException
+    {
+        if ( actualPlayer != null )
+        {
+            prepareNextPlayer();
+        }
     }
 }

@@ -36,9 +36,13 @@ public class PlayListAdapter extends ArrayAdapter<File>
         ((TextView)view.findViewById( R.id.plItemNumber )).setText( String.format("%1$4s", position + 1));
         ((TextView)view.findViewById( R.id.plItemFileName )).setText(plm.get( position ).getFile().getName());
         ((TextView)view.findViewById( R.id.plItemLength )).setText( plm.get( position ).getDuration());
-        if ( plm.get( position ).isPlaying())
+        if ( plm.get( position ).isSelected())
         {
             view.setBackgroundResource( R.drawable.playlist_item_selected );
+        }
+        else if ( plm.get( position ).isPlaying())
+        {
+            view.setBackgroundResource( R.drawable.playlist_item_playing );
         }
         else
         {

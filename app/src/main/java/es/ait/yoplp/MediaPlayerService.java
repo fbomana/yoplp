@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -67,8 +69,7 @@ public class MediaPlayerService extends Service
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("[YOPLP]", "Error en el servicio de reproducción.", e);
         }
         return super.onStartCommand( intent, flags, startId );
     }
