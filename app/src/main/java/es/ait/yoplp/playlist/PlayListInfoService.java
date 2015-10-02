@@ -10,6 +10,8 @@ import android.util.Log;
 import java.io.IOException;
 
 import es.ait.yoplp.Utils;
+import es.ait.yoplp.message.BusManager;
+import es.ait.yoplp.message.PlayListUpdatedMessage;
 
 /**
  * This service it's used to obtain metadata from the tracks on the playlist. When finished it sends
@@ -44,8 +46,7 @@ public class PlayListInfoService extends IntentService
                 loadTrackMetadata( track, retriever );
             }
 
-            Intent message = new Intent(PlayListInfoService.PLAYLISTINFOUPDATED);
-            sendBroadcast(message);
+            BusManager.getBus().post( new PlayListUpdatedMessage() );
 //        }
 //        catch ( Exception e )
 //        {

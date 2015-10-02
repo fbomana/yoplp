@@ -24,6 +24,11 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
         actualPlayerPaused = false;
     }
 
+    protected static void initialize( MediaPlayerAdapter mpa )
+    {
+        instance = mpa;
+    }
+
     public static MediaPlayerAdapter getInstance()
     {
         if ( instance == null )

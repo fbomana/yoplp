@@ -20,12 +20,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.squareup.otto.Subscribe;
+
 import java.io.File;
 import java.io.IOException;
 
 import es.ait.yoplp.fileChooser.FileChooserActivity;
 import es.ait.yoplp.m3u.M3UReader;
 import es.ait.yoplp.m3u.M3UWriter;
+import es.ait.yoplp.message.BusManager;
+import es.ait.yoplp.message.NewTimeMessage;
+import es.ait.yoplp.message.PlayListUpdatedMessage;
 import es.ait.yoplp.playlist.PlayListInfoService;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.PlayListPositionChangeListener;
@@ -41,7 +46,6 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     private ImageButton upButton;
     private ImageButton downButton;
     private ImageButton deleteButton;
-    private PlayListUpdateReciver playListUpateReciver;
     private ListView listView;
 
     @Override
@@ -116,20 +120,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume()
     {
         super.onResume();
+        BusManager.getBus().register( this );
         this.seleccionado = PlayListManager.getInstance().getPointer();
 
         listView.setAdapter(new PlayListAdapter(this, R.id.playListView, PlayListManager.getInstance()));
 
         TextView textView = ( TextView ) findViewById( R.id.textSongTimeLeft );
 
-        if ( playListUpateReciver == null )
-        {
-            playListUpateReciver = new PlayListUpdateReciver( listView, textView );
-            IntentFilter intentFilter = new IntentFilter( );
-            intentFilter.addAction( PlayListInfoService.PLAYLISTINFOUPDATED );
-            intentFilter.addAction( TimerService.INTENT_TIME_CHANGE );
-            registerReceiver(playListUpateReciver, intentFilter);
-        }
+
 
         if ( !PlayListManager.getInstance().isEmpty() )
         {
@@ -355,11 +353,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onPause()
     {
+        BusManager.getBus().unregister( this );
         YOPLPServiceController.getInstance( this ).timerServiceStop();
-        if ( playListUpateReciver != null )
-        {
-            unregisterReceiver( playListUpateReciver );
-        }
         if ( !PlayListManager.getInstance().isEmpty())
         {
             Log.i("[YOPLP]", "Writing playlist to internal storage");
@@ -376,29 +371,33 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         super.onPause();
     }
 
-    class PlayListUpdateReciver extends BroadcastReceiver
+    /*
+     ***************************** Bus listeners **************************************
+     */
+
+    @Subscribe
+    public void newTimeMessage( final NewTimeMessage message )
     {
-        private ListView listView;
-        private TextView textView;
-
-        public PlayListUpdateReciver( ListView listView, TextView textView )
+        runOnUiThread(new Runnable()
         {
-            super();
-            this.listView = listView;
-            this.textView = textView;
-        }
+            @Override
+            public void run()
+            {
+                ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getNewTimeAsString());
+            }
+        });
+    }
 
-        @Override
-        public void onReceive(Context context, Intent intent)
+    @Subscribe
+    public void playListUpdatedMessage( PlayListUpdatedMessage message )
+    {
+        runOnUiThread(new Runnable()
         {
-            if (TimerService.INTENT_TIME_CHANGE.equals(intent.getAction()) )
+            @Override
+            public void run()
             {
-                textView.setText( Utils.milisToText( intent.getIntExtra("newtime", 0)));
+                ((ListView) findViewById(R.id.playListView)).invalidateViews();
             }
-            else
-            {
-                listView.invalidateViews();
-            }
-        }
+        });
     }
 }

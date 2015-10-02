@@ -9,6 +9,8 @@ import android.widget.Toast;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ait.yoplp.MediaPlayerAdapter;
+import es.ait.yoplp.message.BusManager;
+import es.ait.yoplp.message.NewTimeMessage;
 
 /**
  * Created by aitkiar on 7/09/15.
@@ -41,15 +43,11 @@ public class TimerService extends IntentService
     protected void onHandleIntent(Intent intent)
     {
         MediaPlayer mp = MediaPlayerAdapter.getInstance().getActualPlayer();
-        Log.i("[YOPLP]", "[TimerService] Inicio del bucle");
         while( !stop.get())
         {
             if ( mp != null && mp.isPlaying())
             {
-                Intent message = new Intent( TimerService.INTENT_TIME_CHANGE );
-                message.putExtra("newtime", mp.getDuration() - mp.getCurrentPosition());
-                sendBroadcast(message);
-                Log.i("[YOPLP]", "New time broadcast send");
+                BusManager.getBus().post(new NewTimeMessage(mp.getDuration() - mp.getCurrentPosition()));
             }
             try
             {
@@ -62,7 +60,7 @@ public class TimerService extends IntentService
             }
             mp = MediaPlayerAdapter.getInstance().getActualPlayer();
         }
-        Log.i("[YOPLP]", "[TimerService] Fin del bucle");
+        stop = new AtomicBoolean( false );
         stopSelf();
     }
 }
