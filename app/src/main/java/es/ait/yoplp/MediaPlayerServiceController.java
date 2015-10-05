@@ -17,7 +17,7 @@ public class MediaPlayerServiceController
 
     public static MediaPlayerServiceController getInstance( YOPLPActivity activity )
     {
-        if ( instance == null )
+        if ( instance == null || !instance.activity.equals( activity ))
         {
             instance = new MediaPlayerServiceController( activity );
         }

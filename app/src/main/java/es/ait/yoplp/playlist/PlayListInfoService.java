@@ -2,10 +2,8 @@ package es.ait.yoplp.playlist;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.media.MediaMetadata;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import java.io.IOException;
 
@@ -35,8 +33,8 @@ public class PlayListInfoService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-//        try
-//        {
+        try
+        {
             PlayListManager<Track> plm = PlayListManager.getInstance();
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             Track track;
@@ -47,11 +45,12 @@ public class PlayListInfoService extends IntentService
             }
 
             BusManager.getBus().post( new PlayListUpdatedMessage() );
-//        }
-//        catch ( Exception e )
-//        {
-//            Log.e("[YOPLP]","Error al obtener información de la playlist", e );
-//        }
+        }
+        catch ( Throwable t )
+        {
+            Utils.dumpException( getBaseContext(), t );
+            throw t;
+        }
     }
 
     public static void loadTrackMetada( Track track )

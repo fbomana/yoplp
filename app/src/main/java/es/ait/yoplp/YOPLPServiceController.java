@@ -20,7 +20,7 @@ public class YOPLPServiceController
 
     protected static YOPLPServiceController getInstance( YOPLPActivity activity )
     {
-        if ( instance == null )
+        if ( instance == null || !instance.activity.equals( activity ))
         {
             instance = new YOPLPServiceController( activity );
         }

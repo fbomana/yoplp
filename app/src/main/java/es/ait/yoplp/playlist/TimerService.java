@@ -4,11 +4,11 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ait.yoplp.MediaPlayerAdapter;
+import es.ait.yoplp.Utils;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.NewTimeMessage;
 
@@ -42,25 +42,33 @@ public class TimerService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        MediaPlayer mp = MediaPlayerAdapter.getInstance().getActualPlayer();
-        while( !stop.get())
+        try
         {
-            if ( mp != null && mp.isPlaying())
+            MediaPlayer mp = MediaPlayerAdapter.getInstance().getActualPlayer();
+            while( !stop.get())
             {
-                BusManager.getBus().post(new NewTimeMessage(mp.getDuration() - mp.getCurrentPosition()));
+                if ( mp != null && mp.isPlaying())
+                {
+                    BusManager.getBus().post(new NewTimeMessage(mp.getDuration() - mp.getCurrentPosition()));
+                }
+                try
+                {
+                    Thread.currentThread().sleep(1000);
+                }
+                catch ( Exception e )
+                {
+                    Log.i("[YOPLP]", "Excepcion en onHandleItemSleep", e);
+                    break;
+                }
+                mp = MediaPlayerAdapter.getInstance().getActualPlayer();
             }
-            try
-            {
-                Thread.currentThread().sleep(1000);
-            }
-            catch ( Exception e )
-            {
-                Log.i("[YOPLP]", "Excepcion en onHandleItemSleep", e);
-                break;
-            }
-            mp = MediaPlayerAdapter.getInstance().getActualPlayer();
+            stop = new AtomicBoolean( false );
+            stopSelf();
         }
-        stop = new AtomicBoolean( false );
-        stopSelf();
+        catch ( Throwable t )
+        {
+            Utils.dumpException(getBaseContext(), t);
+            throw t;
+        }
     }
 }

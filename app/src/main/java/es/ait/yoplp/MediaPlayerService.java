@@ -2,12 +2,10 @@ package es.ait.yoplp;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.widget.ListView;
-import android.widget.Toast;
+
+import java.io.IOException;
 
 /**
  * Created by aitkiar on 1/09/15.
@@ -25,7 +23,6 @@ public class MediaPlayerService extends Service
 
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-
         try
         {
             switch ( intent.getAction())
@@ -55,21 +52,15 @@ public class MediaPlayerService extends Service
                     MediaPlayerAdapter.getInstance().previous();
                     break;
                 }
-                /*case ACTION_FIRST:
-                {
-                    MediaPlayerAdapter.getInstance().first();
-                    break;
-                }
-                case ACTION_LAST:
-                {
-                    MediaPlayerAdapter.getInstance().last();
-                    break;
-                }*/
             }
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
-            Log.e("[YOPLP]", "Error en el servicio de reproducción.", e);
+        }
+        catch ( Throwable t )
+        {
+            Utils.dumpException(getBaseContext(), t);
+            throw t;
         }
         return super.onStartCommand( intent, flags, startId );
     }

@@ -1,7 +1,5 @@
 package es.ait.yoplp.playlist;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +13,13 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
 {
     private int pointer;
     private List<PlayListPositionChangeListener> positionListeners;
+
+    @Override
+    public void clear()
+    {
+        super.clear();
+        pointer = 0;
+    }
 
     /**
      * Intercambia dos elementos de la lista.
@@ -111,7 +116,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
      */
     public E get()
     {
-        if ( pointer >= 0 && pointer < size())
+        if ( !isEmpty() )
         {
             return get( pointer );
         }
@@ -209,11 +214,11 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
         {
             if ( ((Track)get(i)).isSelected() && !((Track)get(i -1)).isSelected())
             {
-                if ( pointer > 0 && ((Track)get(pointer)).isSelected())
+                if ( pointer == i )
                 {
                     pointer --;
                 }
-                else if ( pointer + 1 < size() && ((Track)get(pointer + 1)).isSelected())
+                else if ( pointer == i - 1)
                 {
                     pointer ++;
                 }
@@ -232,11 +237,11 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
         {
             if ( ((Track)get(i)).isSelected() && !((Track)get(i + 1)).isSelected())
             {
-                if ( pointer < size() -1 && ((Track)get(pointer)).isSelected())
+                if ( pointer == i )
                 {
                     pointer ++;
                 }
-                else if ( pointer > 0 && ((Track)get(pointer - 1)).isSelected())
+                else if (pointer == i + 1 )
                 {
                     pointer --;
                 }
