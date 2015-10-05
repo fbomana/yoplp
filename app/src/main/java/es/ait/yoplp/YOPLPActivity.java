@@ -177,6 +177,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
                     MediaPlayerServiceController.getInstance( this ).stop();
                     PlayListManager.getInstance().clear();
+                    this.seleccionado = 0;
                     listView.invalidateViews();
                     break;
                 }
@@ -184,6 +185,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 {
                     YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
                     PlayListManager.getInstance().sort();
+                    seleccionado = PlayListManager.getInstance().getPointer();
                     YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
                     listView.invalidateViews();
                     break;
@@ -192,6 +194,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 {
                     YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
                     PlayListManager.getInstance().randomize();
+                    seleccionado = PlayListManager.getInstance().getPointer();
                     YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
                     listView.invalidateViews();
                     break;
@@ -330,7 +333,10 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     {
         try
         {
-            ((PlayListManager<Track>)PlayListManager.getInstance()).get( seleccionado ).setPlaying( false );
+            if ( PlayListManager.getInstance().size() > seleccionado )
+            {
+                ((PlayListManager<Track>) PlayListManager.getInstance()).get(seleccionado).setPlaying(false);
+            }
             ((PlayListManager<Track>)PlayListManager.getInstance()).get( pointer ).setPlaying( true );
 
             listView.invalidateViews();

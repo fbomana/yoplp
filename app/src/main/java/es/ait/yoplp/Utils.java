@@ -5,6 +5,8 @@ import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by aitkiar on 7/09/15.
@@ -40,6 +42,7 @@ public class Utils
         try
         {
             FileOutputStream fos = new FileOutputStream(context.getFilesDir().getAbsolutePath() + "/exceptionLog.txt", true);
+            fos.write(("Dumping error produced at:" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format( new Date() ) + "\n").getBytes("utf-8"));
             t.printStackTrace(new PrintStream(fos));
             fos.close();
         }

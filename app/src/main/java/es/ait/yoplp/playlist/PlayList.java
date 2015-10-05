@@ -46,6 +46,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
         {
             swap( i, rnd.nextInt( size()));
         }
+        updatePointer();
     }
 
 
@@ -191,6 +192,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
         {
             Collections.sort(this);
         }
+        updatePointer();
     }
 
     /**
@@ -292,5 +294,20 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
             }
         }
         return -1;
+    }
+
+    /**
+     * Search for the track marked as playing and updates the pointer.
+     */
+    private void updatePointer()
+    {
+        for ( int i =  0; i < size(); i++ )
+        {
+            if ( ((Track)get(i)).isPlaying())
+            {
+                pointer = i;
+                break;
+            }
+        }
     }
 }
