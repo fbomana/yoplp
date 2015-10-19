@@ -4,7 +4,6 @@ import android.media.MediaPlayer;
 
 import java.io.IOException;
 
-import es.ait.yoplp.playlist.PlayListInfoService;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.Track;
 
@@ -49,7 +48,14 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
         {
             if ( actualPlayer != null )
             {
-                actualPlayer.setNextMediaPlayer(nextPlayer);
+                try
+                {
+                    actualPlayer.setNextMediaPlayer(nextPlayer);
+                }
+                catch ( IllegalStateException e )
+                {
+                    // Capture the exception that can happen if someone hit the buttons repeteadly
+                }
             }
         }
     }

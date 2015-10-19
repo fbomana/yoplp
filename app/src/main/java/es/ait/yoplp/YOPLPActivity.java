@@ -1,6 +1,8 @@
 package es.ait.yoplp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +19,7 @@ import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ait.yoplp.fileChooser.FileChooserActivity;
 import es.ait.yoplp.m3u.M3UReader;
@@ -38,6 +41,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     private ImageButton downButton;
     private ImageButton deleteButton;
     private ListView listView;
+    private AtomicBoolean iniciarReproduccion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -78,6 +82,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             textSongAlbum = (TextView) findViewById(R.id.textSongAlbum);
             textSongAuthor = (TextView) findViewById(R.id.textSongAuthor);
 
+            iniciarReproduccion = new AtomicBoolean( false );
             if (PlayListManager.getInstance().isEmpty())
             {
                 try
@@ -88,6 +93,13 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                         Log.i("[YOPLP]", "Reading last playlist from internal storage");
                         PlayListManager.getInstance().addAll(M3UReader.getInstance(file).parse());
                         file.delete();
+                        if ( !PlayListManager.getInstance().isEmpty())
+                        {
+                            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                            int defaultValue = sharedPref.getInt("Canción seleccionada", 0);
+                            PlayListManager.getInstance().setPointer( defaultValue );
+                            iniciarReproduccion.set(true);
+                        }
                     }
                 } catch (Exception e)
                 {
@@ -127,8 +139,6 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
 
             TextView textView = ( TextView ) findViewById( R.id.textSongTimeLeft );
 
-
-
             if ( !PlayListManager.getInstance().isEmpty() )
             {
                 if ( textSongAlbum != null )
@@ -140,6 +150,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 YOPLPServiceController.getInstance( this ).timerServiceStart();
             }
             selecciontModeButton.setEnabled( !PlayListManager.getInstance().isEmpty() );
+
+            if ( iniciarReproduccion.get() )
+            {
+                iniciarReproduccion.set( false );
+                PlayListManager.getInstance().navigateTo( seleccionado );
+                MediaPlayerServiceController.getInstance( this ).play();
+                YOPLPServiceController.getInstance( this ).timerServiceStart();
+            }
         }
         catch ( Throwable t )
         {
@@ -333,23 +351,36 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     {
         try
         {
-            if ( PlayListManager.getInstance().size() > seleccionado )
+            if (PlayListManager.getInstance().size() > seleccionado)
             {
                 ((PlayListManager<Track>) PlayListManager.getInstance()).get(seleccionado).setPlaying(false);
             }
-            ((PlayListManager<Track>)PlayListManager.getInstance()).get( pointer ).setPlaying( true );
+            ((PlayListManager<Track>) PlayListManager.getInstance()).get(pointer).setPlaying(true);
 
             listView.invalidateViews();
+
+            if (pointer > seleccionado && pointer < listView.getAdapter().getCount() - 1)
+            {
+                listView.smoothScrollToPosition(pointer + 1);
+            }
+            else if (pointer < seleccionado && pointer > 0)
+            {
+                listView.smoothScrollToPosition(pointer - 1);
+            }
+            else
+            {
+                listView.smoothScrollToPosition(pointer);
+            }
             seleccionado = pointer;
 
             Track track = (Track) PlayListManager.getInstance().get(pointer);
-            (( TextView )findViewById( R.id.textSongName )).setText( track.getTitle());
-            (( TextView )findViewById( R.id.textSongTimeLeft )).setText(track.getDuration());
-            if ( textSongAlbum != null )
+            ((TextView) findViewById(R.id.textSongName)).setText(track.getTitle());
+            ((TextView) findViewById(R.id.textSongTimeLeft)).setText(track.getDuration());
+            if (textSongAlbum != null)
             {
                 textSongAlbum.setText(track.getAlbum());
             }
-            if ( textSongAuthor != null )
+            if (textSongAuthor != null)
             {
                 textSongAuthor.setText(track.getAuthor());
             }
@@ -370,7 +401,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 ((Track) PlayListManager.getInstance().get(position)).toggleSelected();
                 ((PlayListAdapter) listView.getAdapter()).notifyDataSetChanged();
-            } else
+            }
+            else
             {
                 if (PlayListManager.getInstance().navigateTo(position))
                 {
@@ -420,6 +452,19 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+
+        if ( !PlayListManager.getInstance().isEmpty())
+        {
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("Canción seleccionada", PlayListManager.getInstance().getPointer());
+            editor.commit();
+        }
+    }
     /*
      ***************************** Bus listeners **************************************
      */

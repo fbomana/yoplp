@@ -47,10 +47,18 @@ public class TimerService extends IntentService
             MediaPlayer mp = MediaPlayerAdapter.getInstance().getActualPlayer();
             while( !stop.get())
             {
-                if ( mp != null && mp.isPlaying())
+                try
                 {
-                    BusManager.getBus().post(new NewTimeMessage(mp.getDuration() - mp.getCurrentPosition()));
+                    if (mp != null && mp.isPlaying())
+                    {
+                        BusManager.getBus().post(new NewTimeMessage(mp.getDuration() - mp.getCurrentPosition()));
+                    }
                 }
+                catch ( IllegalStateException e )
+                {
+                    // Capture the Exception that can be cause if someone hits next o previous very fast.
+                }
+
                 try
                 {
                     Thread.currentThread().sleep(1000);

@@ -54,7 +54,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
      * Move the pointer to the first Entry. Returns false if list is empty
      * @return
      */
-    public boolean first()
+    public synchronized boolean first()
     {
         if ( !isEmpty())
         {
@@ -68,7 +68,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
      * Move the pointer to the last entry and return false if list is empty
      * @return
      */
-    public boolean last()
+    public synchronized boolean last()
     {
         if ( !isEmpty() )
         {
@@ -84,7 +84,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
      * Move the pointer one entry ahead. If there is no entry to move to, returns false.
      * @return
      */
-    public boolean next()
+    public synchronized boolean next()
     {
         if ( !isEmpty() && (pointer + 1 ) < size())
         {
@@ -100,7 +100,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
      * Move the pointer to the previous entry.If there is no entry to move to, returns false.
      * @return
      */
-    public boolean previous()
+    public synchronized boolean previous()
     {
         if ( !isEmpty() && pointer >= 0 )
         {
@@ -145,6 +145,18 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
     public int getPointer()
     {
         return pointer;
+    }
+
+    /**
+     * This method it's for set the initial value of pointer only. For change the pointer after initialization
+     * use navigateTod
+     *
+     * @param pointer
+     * @return
+     */
+    public void setPointer( int pointer )
+    {
+        this.pointer = pointer;
     }
 
     public boolean navigateTo( int pointer )
