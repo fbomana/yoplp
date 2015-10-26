@@ -25,32 +25,35 @@ public class MediaPlayerService extends Service
     {
         try
         {
-            switch ( intent.getAction())
+            if ( intent != null )
             {
-                case ACTION_PLAY:
+                switch (intent.getAction())
                 {
-                    MediaPlayerAdapter.getInstance().play();
-                    break;
-                }
-                case ACTION_PAUSE:
-                {
-                    MediaPlayerAdapter.getInstance().pause();
-                    break;
-                }
-                case ACTION_STOP:
-                {
-                    MediaPlayerAdapter.getInstance().stop();
-                    break;
-                }
-                case ACTION_NEXT:
-                {
-                    MediaPlayerAdapter.getInstance().next();
-                    break;
-                }
-                case ACTION_PREVIOUS:
-                {
-                    MediaPlayerAdapter.getInstance().previous();
-                    break;
+                    case ACTION_PLAY:
+                    {
+                        MediaPlayerAdapter.getInstance().play();
+                        break;
+                    }
+                    case ACTION_PAUSE:
+                    {
+                        MediaPlayerAdapter.getInstance().pause();
+                        break;
+                    }
+                    case ACTION_STOP:
+                    {
+                        MediaPlayerAdapter.getInstance().stop();
+                        break;
+                    }
+                    case ACTION_NEXT:
+                    {
+                        MediaPlayerAdapter.getInstance().next();
+                        break;
+                    }
+                    case ACTION_PREVIOUS:
+                    {
+                        MediaPlayerAdapter.getInstance().previous();
+                        break;
+                    }
                 }
             }
         }

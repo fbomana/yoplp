@@ -10,9 +10,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -26,6 +28,7 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
 {
 
     private Stack<File> folderStack = new Stack<File>();
+    private FileChooserActivityConfiguration configuration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -35,6 +38,7 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
             super.onCreate(savedInstanceState);
             setContentView(R.layout.file_chooser);
 
+            configuration = new FileChooserActivityConfiguration( getIntent());
 
             ListView listView = (ListView) findViewById(R.id.fcFileList );
             try
@@ -46,21 +50,43 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                 else
                 {
                     List<File> files = new ArrayList<File>();
-                    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
-                            Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))
+                    if ( configuration.getInitialFolder() != null )
                     {
-                        File[] aux = new File("/mnt").listFiles();
-
-                        for (int i = 0; i < aux.length; i++)
+                        File[] aux;
+                        if ( configuration.getFileFilter() != null )
                         {
-                            if ( aux[i].getName().startsWith("sdcard"))
+                            aux = configuration.getInitialFolder().listFiles( configuration.getFileFilter() );
+                        }
+                        else
+                        {
+                            aux = configuration.getInitialFolder().listFiles();
+                        }
+
+                        for( int i = 0; i < aux.length; i ++ )
+                        {
+                            files.add( aux[i] );
+                        }
+
+                    }
+                    else
+                    {
+                        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
+                                Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))
+                        {
+                            File[] aux = new File("/mnt").listFiles();
+
+                            for (int i = 0; i < aux.length; i++)
                             {
-                                files.add(aux[i]);
+                                if (aux[i].getName().startsWith("sdcard"))
+                                {
+                                    files.add(aux[i]);
+                                }
                             }
                         }
+                        files.add(Environment.getDataDirectory());
+                        files.add(Environment.getRootDirectory());
                     }
-                    files.add( Environment.getDataDirectory());
-                    files.add( Environment.getRootDirectory());
+                    Collections.sort(files, configuration.getFileComparator());
                     listView.setAdapter(new FolderAdapter(this, R.id.fcFileList, files));
                 }
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -110,7 +136,8 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
         catch ( Throwable t )
         {
             Utils.dumpException(getBaseContext(), t);
-            throw t;
+            Toast.makeText( this, "An error ocurred: " + t.toString() + "\n" + t.getMessage(), Toast.LENGTH_LONG ).show();
+            finish();
         }
     }
 

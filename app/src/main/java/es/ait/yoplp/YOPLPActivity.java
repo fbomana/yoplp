@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ait.yoplp.fileChooser.FileChooserActivity;
+import es.ait.yoplp.fileChooser.FileComparator;
+import es.ait.yoplp.fileChooser.MusicFileFilter;
 import es.ait.yoplp.m3u.M3UReader;
 import es.ait.yoplp.m3u.M3UWriter;
 import es.ait.yoplp.message.BusManager;
@@ -187,6 +189,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 case R.id.menuAddFiles:
                 {
                     Intent intent = new Intent(this, FileChooserActivity.class);
+                    intent.putExtra("FileChooserActivity.fileFilter", MusicFileFilter.class.getName());
+                    intent.putExtra("FileChooserActivity.fileComparator", FileComparator.class.getName());
                     startActivity(intent);
                     break;
                 }
