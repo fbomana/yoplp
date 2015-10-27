@@ -45,49 +45,11 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
             {
                 if ( !folderStack.empty())
                 {
-                    listView.setAdapter(new FolderAdapter(this, R.id.fcFileList, folderStack.peek()));
+                    listView.setAdapter(new FolderAdapter(configuration, this, R.id.fcFileList, folderStack.peek() ));
                 }
                 else
                 {
-                    List<File> files = new ArrayList<File>();
-                    if ( configuration.getInitialFolder() != null )
-                    {
-                        File[] aux;
-                        if ( configuration.getFileFilter() != null )
-                        {
-                            aux = configuration.getInitialFolder().listFiles( configuration.getFileFilter() );
-                        }
-                        else
-                        {
-                            aux = configuration.getInitialFolder().listFiles();
-                        }
-
-                        for( int i = 0; i < aux.length; i ++ )
-                        {
-                            files.add( aux[i] );
-                        }
-
-                    }
-                    else
-                    {
-                        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
-                                Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))
-                        {
-                            File[] aux = new File("/mnt").listFiles();
-
-                            for (int i = 0; i < aux.length; i++)
-                            {
-                                if (aux[i].getName().startsWith("sdcard"))
-                                {
-                                    files.add(aux[i]);
-                                }
-                            }
-                        }
-                        files.add(Environment.getDataDirectory());
-                        files.add(Environment.getRootDirectory());
-                    }
-                    Collections.sort(files, configuration.getFileComparator());
-                    listView.setAdapter(new FolderAdapter(this, R.id.fcFileList, files));
+                    listView.setAdapter(new FolderAdapter(configuration, this, R.id.fcFileList ));
                 }
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                 {
@@ -109,10 +71,10 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                             {
                                 folderStack.push( file );
                                 ((FolderAdapter) parent.getAdapter()).navigateTo(file);
-                            } catch (Exception e)
+                            }
+                            catch (Exception e)
                             {
-                                e.printStackTrace();
-                                System.out.println("------------------------------");
+                                Utils.dumpException( FileChooserActivity.this, e );
                             }
                         }
                         return true;
@@ -181,35 +143,12 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                 folderStack.pop();
                 if ( folderStack.empty() )
                 {
-                    List<File> files = new ArrayList<File>();
-                    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
-                            Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))
-                    {
-                        File[] aux = new File("/mnt").listFiles();
-
-                        for (int i = 0; i < aux.length; i++)
-                        {
-                            if ( aux[i].getName().startsWith("sdcard"))
-                            {
-                                files.add(aux[i]);
-                            }
-                        }
-                    }
-                    files.add( Environment.getDataDirectory());
-                    files.add( Environment.getRootDirectory());
-                    try
-                    {
-                        ((ListView) findViewById(R.id.fcFileList)).setAdapter(new FolderAdapter(this, R.id.fcFileList, files));
-                    }
-                    catch ( Exception e )
-                    {
-                    }
+                    ((ListView) findViewById(R.id.fcFileList)).setAdapter(new FolderAdapter( configuration, this, R.id.fcFileList ));
                 }
                 else
                 {
-                    ((FolderAdapter)((ListView) findViewById(R.id.fcFileList )).getAdapter()).navigateTo( folderStack.peek());
+                    ((FolderAdapter)((ListView) findViewById(R.id.fcFileList )).getAdapter()).navigateTo(folderStack.peek());
                 }
-
             }
         }
         catch ( Throwable t )

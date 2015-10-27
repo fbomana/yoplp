@@ -1,6 +1,7 @@
 package es.ait.yoplp.fileChooser;
 
 import android.content.Context;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import es.ait.yoplp.R;
@@ -26,29 +28,41 @@ import es.ait.yoplp.playlist.Track;
 public class FolderAdapter extends ArrayAdapter
 {
 
+    private FileChooserActivityConfiguration configuration;
+    private View oldView;
+
     private List<File> selectedList;
 
-    public FolderAdapter(Context context, int resource )
+    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource )
     {
-        super( context, resource, folderToList( null ));
-        sort(new FileComparator());
-    }
-    public FolderAdapter(Context context, int resource, File folder) throws Exception
-    {
-        super( context, resource, folderToList(folder));
-        sort( new FileComparator());
+        super( context, resource, folderToList( configuration.getInitialFolder(), configuration ));
+
+        this.configuration = configuration;
+        sort( configuration.getFileComparator() );
     }
 
-    public FolderAdapter(Context context, int resource, String folder) throws Exception
+    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, File folder ) throws Exception
     {
-        super( context, resource,folderToList( new File( folder )));
-        sort( new FileComparator());
+        super( context, resource, folderToList( folder, configuration ));
+
+        this.configuration = configuration;
+        sort( configuration.getFileComparator() );
     }
 
-    public FolderAdapter(Context context, int resource, List<File> files ) throws Exception
+    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, String folder) throws Exception
+    {
+        super( context, resource,folderToList( new File( folder ), configuration));
+
+        this.configuration = configuration;
+        sort( configuration.getFileComparator() );
+    }
+
+    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, List<File> files ) throws Exception
     {
         super( context, resource, files );
-        sort( new FileComparator());
+
+        this.configuration = configuration;
+        sort( configuration.getFileComparator());
     }
 
     /**
@@ -58,17 +72,35 @@ public class FolderAdapter extends ArrayAdapter
      * @param folder
      * @return
      */
-    private static List<File> folderToList( File folder )
+    private static List<File> folderToList( File folder, FileChooserActivityConfiguration configuration )
     {
         List<File> result = new ArrayList<File>();
         if ( folder != null )
         {
-            File[] files = folder.listFiles(new MusicFileFilter());
+            File[] files = folder.listFiles( configuration.getFileFilter());
 
             for (int i = 0; i < files.length; i++)
             {
                 result.add(files[i]);
             }
+        }
+        else
+        {
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))
+            {
+                File[] aux = new File("/mnt").listFiles();
+
+                for (int i = 0; i < aux.length; i++)
+                {
+                    if (aux[i].getName().startsWith("sdcard"))
+                    {
+                        result.add(aux[i]);
+                    }
+                }
+            }
+            result.add(Environment.getDataDirectory());
+            result.add(Environment.getRootDirectory());
         }
         return result;
     }
@@ -80,12 +112,17 @@ public class FolderAdapter extends ArrayAdapter
             this.clear();
             this.notifyDataSetChanged();
             File[] ficheros = folder.listFiles(new MusicFileFilter());
+            if ( ficheros != null )
+            {
+                Arrays.sort( ficheros, configuration.getFileComparator());
+            }
             for ( int i = 0; ficheros != null && i < ficheros.length; i ++ )
             {
                 this.add( ficheros[i]);
             }
             this.notifyDataSetChanged();
             this.selectedList.clear();
+            this.oldView = null;
         }
         else
         {
@@ -134,6 +171,15 @@ public class FolderAdapter extends ArrayAdapter
         }
         else
         {
+            if ( !configuration.isMultiSelect())
+            {
+                if ( oldView != null )
+                {
+                    setSelected(oldView, false);
+                }
+                selectedList.clear();
+                oldView = view;
+            }
             selectedList.add(file);
             setSelected(view, true);
         }
