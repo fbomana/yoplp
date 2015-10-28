@@ -1,21 +1,18 @@
 package es.ait.yoplp.fileChooser;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Stack;
 
 import es.ait.yoplp.R;
@@ -71,6 +68,7 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                             {
                                 folderStack.push( file );
                                 ((FolderAdapter) parent.getAdapter()).navigateTo(file);
+                                setUrlText( file );
                             }
                             catch (Exception e)
                             {
@@ -86,14 +84,26 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                 e.printStackTrace();
             }
 
-            TextView textView= (TextView) findViewById(R.id.fcUrlText );
-            textView.setText(!folderStack.empty() ? folderStack.peek().getAbsolutePath() : "");
+            setUrlText(!folderStack.empty() ? folderStack.peek() : null);
 
             Button okButton = (Button) findViewById(R.id.fcOkButton );
             okButton.setOnClickListener(this);
 
             Button cancelButton = (Button) findViewById(R.id.fcCancelButton );
             cancelButton.setOnClickListener( this );
+
+            ImageButton newFolderButton = (ImageButton) findViewById(R.id.fcNewFolderButton );
+            if ( configuration.isCreateFolder())
+            {
+                newFolderButton.setEnabled( true );
+                newFolderButton.setImageResource(R.drawable.folder_add);
+            }
+            else
+            {
+                newFolderButton.setEnabled( false );
+                newFolderButton.setImageResource( R.drawable.folder_add_disable );
+            }
+            newFolderButton.setOnClickListener( this );
         }
         catch ( Throwable t )
         {
@@ -144,10 +154,12 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                 if ( folderStack.empty() )
                 {
                     ((ListView) findViewById(R.id.fcFileList)).setAdapter(new FolderAdapter( configuration, this, R.id.fcFileList ));
+                    setUrlText( null );
                 }
                 else
                 {
                     ((FolderAdapter)((ListView) findViewById(R.id.fcFileList )).getAdapter()).navigateTo(folderStack.peek());
+                    setUrlText( folderStack.peek() );
                 }
             }
         }
@@ -186,5 +198,15 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
             Utils.dumpException(getBaseContext(), t);
             throw t;
         }
+    }
+
+    /**
+     * Pone la url con el valor del fichero asignado o "" si es nulo
+     * @param file
+     */
+    private void setUrlText( File file )
+    {
+        TextView textView= (TextView) findViewById(R.id.fcUrlText );
+        textView.setText( file != null ? file.getAbsolutePath() : "");
     }
 }
