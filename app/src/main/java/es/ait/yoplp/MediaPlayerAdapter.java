@@ -10,13 +10,14 @@ import es.ait.yoplp.playlist.Track;
 /**
  * Class that manages the playback of the playlist.
  */
-public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener
+public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener
 {
     private static MediaPlayerAdapter instance;
 
     private MediaPlayer actualPlayer;
     private MediaPlayer nextPlayer;
     private boolean actualPlayerPaused;
+    private int startPosition = 0;
 
     private MediaPlayerAdapter()
     {
@@ -42,7 +43,16 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
     {
         if ( player == actualPlayer )
         {
-            player.start();
+            if ( startPosition > 0 )
+            {
+                player.setOnSeekCompleteListener( this );
+                player.seekTo( startPosition );
+                startPosition = 0;
+            }
+            else
+            {
+                player.start();
+            }
         }
         else
         {
@@ -58,6 +68,16 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
                 }
             }
         }
+    }
+
+    /**
+     * Called when we start in the middle of a track.
+     * @param mp
+     */
+    @Override
+    public void onSeekComplete(MediaPlayer mp)
+    {
+        mp.start();
     }
 
     @Override
@@ -87,6 +107,11 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
 
     public void play() throws IOException
     {
+        play( 0 );
+    }
+
+    public void play( int startPosition ) throws IOException
+    {
         if ( actualPlayer == null )
         {
             PlayListManager<Track> plm = PlayListManager.getInstance();
@@ -100,6 +125,7 @@ public class MediaPlayerAdapter implements MediaPlayer.OnPreparedListener, Media
                     actualPlayer.setOnCompletionListener(this);
                     actualPlayer.setOnPreparedListener(this);
                     actualPlayer.prepareAsync();
+                    this.startPosition = startPosition;
                     prepareNextPlayer();
                 }
             }

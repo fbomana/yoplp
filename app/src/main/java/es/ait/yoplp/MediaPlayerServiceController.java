@@ -1,6 +1,7 @@
 package es.ait.yoplp;
 
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * Created by aitkiar on 30/09/15.
@@ -40,6 +41,13 @@ public class MediaPlayerServiceController
     public void play()
     {
         Intent intent = new Intent( MediaPlayerService.ACTION_PLAY, null, activity, MediaPlayerService.class );
+        activity.startService(intent);
+    }
+
+    public void play( int startTime )
+    {
+        Intent intent = new Intent( MediaPlayerService.ACTION_PLAY, null, activity, MediaPlayerService.class );
+        intent.putExtra("startTime", startTime );
         activity.startService(intent);
     }
 

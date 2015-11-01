@@ -31,7 +31,7 @@ public class MediaPlayerService extends Service
                 {
                     case ACTION_PLAY:
                     {
-                        MediaPlayerAdapter.getInstance().play();
+                        MediaPlayerAdapter.getInstance().play( intent.getIntExtra("startTime", 0 ));
                         break;
                     }
                     case ACTION_PAUSE:

@@ -3,7 +3,9 @@ package es.ait.yoplp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import es.ait.yoplp.message.PlayListUpdatedMessage;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.PlayListPositionChangeListener;
 import es.ait.yoplp.playlist.Track;
+import es.ait.yoplp.settings.YOPLPSettingsActivity;
 
 public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener
 {
@@ -98,8 +101,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                         if ( !PlayListManager.getInstance().isEmpty())
                         {
                             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                            int defaultValue = sharedPref.getInt("Canción seleccionada", 0);
-                            PlayListManager.getInstance().setPointer( defaultValue );
+                            int defaultValue = sharedPref.getInt("Selected track", 0);
+                            PlayListManager.getInstance().setPointer(defaultValue);
                             iniciarReproduccion.set(true);
                         }
                     }
@@ -157,8 +160,11 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 iniciarReproduccion.set( false );
                 PlayListManager.getInstance().navigateTo( seleccionado );
-                MediaPlayerServiceController.getInstance( this ).play();
-                YOPLPServiceController.getInstance( this ).timerServiceStart();
+                if ( PreferenceManager.getDefaultSharedPreferences( this ).getBoolean("prefAutoplay", false ) )
+                {
+                    MediaPlayerServiceController.getInstance(this).play( getPreferences(Context.MODE_PRIVATE).getInt( "playing position", 0 ));
+                    YOPLPServiceController.getInstance(this).timerServiceStart();
+                }
             }
         }
         catch ( Throwable t )
@@ -223,7 +229,9 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 }
                 case R.id.action_settings:
                 {
-                    return true;
+                    Intent intent = new Intent(this, YOPLPSettingsActivity.class);
+                    startActivity(intent);
+                    break;
                 }
             }
 
@@ -465,7 +473,15 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         {
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putInt("Canción seleccionada", PlayListManager.getInstance().getPointer());
+            editor.putInt("Selected track", PlayListManager.getInstance().getPointer());
+            if ( PreferenceManager.getDefaultSharedPreferences( this ).getBoolean("prefRememberTime", false ))
+            {
+                MediaPlayer actualPlayer = MediaPlayerAdapter.getInstance().getActualPlayer();
+                if (actualPlayer.isPlaying())
+                {
+                    editor.putInt("playing position", actualPlayer.getCurrentPosition());
+                }
+            }
             editor.commit();
         }
     }

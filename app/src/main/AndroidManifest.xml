@@ -18,6 +18,8 @@
         <activity
             android:name=".fileChooser.FileChooserActivity"
             android:label="yoplp file chooser"/>
+        <activity android:name=".settings.YOPLPSettingsActivity"
+            android:label="yoplp settings"/>
         <service android:name=".MediaPlayerService"/>
         <service android:name=".playlist.PlayListInfoService"/>
         <service android:name=".playlist.TimerService"/>
