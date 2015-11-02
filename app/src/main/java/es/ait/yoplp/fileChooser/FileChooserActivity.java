@@ -1,6 +1,7 @@
 package es.ait.yoplp.fileChooser;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -192,6 +193,14 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                     finish();
                     break;
                 }
+                case R.id.fcNewFolderButton:
+                {
+                    if ( !folderStack.isEmpty())
+                    {
+                        DialogFragment dialog = new NewFolderDialog();
+                        dialog.show( getSupportFragmentManager(), "New Folder");
+                    }
+                }
             }
         } catch (Throwable t)
         {
@@ -208,5 +217,17 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
     {
         TextView textView= (TextView) findViewById(R.id.fcUrlText );
         textView.setText( file != null ? file.getAbsolutePath() : "");
+    }
+
+    public void newFolder( String folderName )
+    {
+        if ( !folderStack.isEmpty())
+        {
+            File folder = new File ( folderStack.peek().getAbsolutePath() + "/" + folderName );
+            if ( folder.mkdir() )
+            {
+                ((FolderAdapter)((ListView) findViewById(R.id.fcFileList)).getAdapter()).navigateTo( folderStack.peek());
+            }
+        }
     }
 }

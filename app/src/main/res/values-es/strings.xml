@@ -10,8 +10,14 @@
     <string name="button_ok">Aceptar</string>
     <string name="menuClearList">Limpiar lista de reproducción</string>
     <string name="menuRandomizeList">Aleatorizar lista de reproducción</string>
+    <string name="menuSaveList">Salvar lista de reproducción</string>
     <string name="menuSortList">Ordernar lista de reproducción</string>
     <string name="button_selection_mode">Modo Selección</string>
     <string name="selectionModeOn">S.Mode On </string>
     <string name="selectionModeOff">S.Mode Off</string>
+    <string name="fcNewFolder">Nueva carpeta</string>
+    <string name="pref_autoplay">Autoplay</string>
+    <string name="pref_autoplay_summary">Reproduce la ultima canción que se estaba reproduciendo cuando se detuvo por ultima vez.</string>
+    <string name="pref_rememberTime">Recorder posición</string>
+    <string name="pref_rememberTime_summary">Inicia la reproducción automática en la parte del track en la que se paró la aplicación.</string>
 </resources>
