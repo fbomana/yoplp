@@ -10,16 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import es.ait.yoplp.R;
-import es.ait.yoplp.m3u.M3UReader;
-import es.ait.yoplp.playlist.PlayListManager;
-import es.ait.yoplp.playlist.Track;
 
 /**
  * Adapter that permits to pass the contents of a directory to a ListView. It sorts the elements of
@@ -121,7 +116,10 @@ public class FolderAdapter extends ArrayAdapter
                 this.add( ficheros[i]);
             }
             this.notifyDataSetChanged();
-            this.selectedList.clear();
+            if ( selectedList != null )
+            {
+                this.selectedList.clear();
+            }
             this.oldView = null;
         }
         else
@@ -208,7 +206,7 @@ public class FolderAdapter extends ArrayAdapter
         }
     }
 
-    private List<File>getSelectedList()
+    protected List<File>getSelectedList()
     {
         if ( selectedList == null )
         {
@@ -220,70 +218,5 @@ public class FolderAdapter extends ArrayAdapter
     private void setSelectedList( List<File> selectedList )
     {
         this.selectedList = selectedList;
-    }
-
-    /**
-     * Loads all selected files into the general playlist.
-     * If selected file is a folder, it adds all music files found in that folder in a recursive fashion
-     */
-    public void loadFiles()
-    {
-        for ( int i = 0; i < selectedList.size(); i ++ )
-        {
-            loadFiles( selectedList.get( i ));
-        }
-    }
-
-    /**
-     * Recursive algortihm. It can create a potentially very large number of arrays, so it must be
-     * optimized sometime
-     *
-     * @param file
-     */
-    private void loadFiles( File file )
-    {
-        if ( file.canRead())
-        {
-            if (file.isDirectory())
-            {
-                File files[] = file.listFiles( new MusicFileFilter());
-                Arrays.sort(files, new FileComparator());
-                for ( int i = 0; i < files.length; i ++ )
-                {
-                    if ( files[i].isDirectory())
-                    {
-                        loadFiles( files[i] );
-                    }
-                    else // Avoid extra recursive calls that generate overhead
-                    {
-                        if ( "m3u".equals( files[i].getName().substring( files[i].getName().lastIndexOf(".") + 1 )))
-                        {
-                            // Avoid reading m3u files in a directory
-                        }
-                        else
-                        {
-                            PlayListManager.getInstance().add(new Track(files[i]));
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if ( "m3u".equals( file.getName().substring( file.getName().lastIndexOf(".") + 1 )))
-                {
-                    try
-                    {
-                        PlayListManager.getInstance().addAll(M3UReader.getInstance( file ).parse());
-                    }
-                    catch ( IOException e )
-                    {
-                    }
-                }
-                else
-                {
-                    PlayListManager.getInstance().add(new Track(file));
-                }
-            }
-        }
     }
 }

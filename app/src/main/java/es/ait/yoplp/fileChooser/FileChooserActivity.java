@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import es.ait.yoplp.R;
@@ -48,6 +50,20 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                 else
                 {
                     listView.setAdapter(new FolderAdapter(configuration, this, R.id.fcFileList ));
+                    if ( configuration.getInitialFolder() != null )
+                    {
+                        File parent = configuration.getInitialFolder();
+                        List<File> files = new ArrayList<File>();
+                        while ( parent != null )
+                        {
+                            files.add( parent );
+                            parent = parent.getParentFile();
+                        }
+                        for ( int i = files.size() - 1; i >= 0; i-- )
+                        {
+                            folderStack.push( files.get( i ));
+                        }
+                    }
                 }
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                 {
@@ -184,7 +200,7 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
             {
                 case R.id.fcOkButton:
                 {
-                    ((FolderAdapter) ((ListView) findViewById(R.id.fcFileList)).getAdapter()).loadFiles();
+                    configuration.getProccessor().process ( ((FolderAdapter) ((ListView) findViewById(R.id.fcFileList)).getAdapter()).getSelectedList()) ;
                     finish();
                     break;
                 }

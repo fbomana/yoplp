@@ -10,4 +10,9 @@
         android:title="@string/pref_rememberTime"
         android:summary="@string/pref_rememberTime_summary"
         android:defaultValue="false"/>
+    <es.ait.yoplp.settings.PreferenceFolderEdit
+        android:key="prefDefaultM3UFolder"
+        android:title="@string/pref_defaultM3UFolder"
+        android:defaultValue=""/>
+
 </PreferenceScreen>

@@ -19,5 +19,6 @@
     <string name="pref_autoplay_summary">YOPLP plays the track that was playing the last time it stops.</string>
     <string name="pref_rememberTime">Remember time</string>
     <string name="pref_rememberTime_summary">Autoplay starts on the position of the track that was last played</string>
+    <string name="pref_defaultM3UFolder">Default folder for playlists</string>
 
 </resources>

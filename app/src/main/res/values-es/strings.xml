@@ -20,4 +20,5 @@
     <string name="pref_autoplay_summary">Reproduce la ultima canción que se estaba reproduciendo cuando se detuvo por ultima vez.</string>
     <string name="pref_rememberTime">Recorder posición</string>
     <string name="pref_rememberTime_summary">Inicia la reproducción automática en la parte del track en la que se paró la aplicación.</string>
+    <string name="pref_defaultM3UFolder">Directorio por defecto para listas de reproducción.</string>
 </resources>

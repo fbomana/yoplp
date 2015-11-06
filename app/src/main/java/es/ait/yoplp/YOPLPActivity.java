@@ -1,6 +1,5 @@
 package es.ait.yoplp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -26,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import es.ait.yoplp.fileChooser.FileChooserActivity;
 import es.ait.yoplp.fileChooser.FileComparator;
 import es.ait.yoplp.fileChooser.MusicFileFilter;
+import es.ait.yoplp.fileChooser.MusicFileProccessor;
 import es.ait.yoplp.m3u.M3UReader;
 import es.ait.yoplp.m3u.M3UWriter;
 import es.ait.yoplp.message.BusManager;
@@ -198,6 +198,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     Intent intent = new Intent(this, FileChooserActivity.class);
                     intent.putExtra("FileChooserActivity.fileFilter", MusicFileFilter.class.getName());
                     intent.putExtra("FileChooserActivity.fileComparator", FileComparator.class.getName());
+                    intent.putExtra("FileChooserActivity.fileProccessor", MusicFileProccessor.class.getName());
                     startActivity(intent);
                     break;
                 }
@@ -478,7 +479,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             if ( sharedPref.getBoolean("prefRememberTime", false ))
             {
                 MediaPlayer actualPlayer = MediaPlayerAdapter.getInstance().getActualPlayer();
-                if (actualPlayer.isPlaying())
+                if ( actualPlayer != null && actualPlayer.isPlaying())
                 {
                     editor.putInt("playing position", actualPlayer.getCurrentPosition());
                 }

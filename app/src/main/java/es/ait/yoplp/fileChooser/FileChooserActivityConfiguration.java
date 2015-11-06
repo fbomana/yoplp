@@ -1,6 +1,7 @@
 package es.ait.yoplp.fileChooser;
 
 import android.content.Intent;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -17,6 +18,7 @@ public class FileChooserActivityConfiguration
     private FileFilter fileFilter;
     private File initialFolder;
     private boolean multiSelect = true;
+    private FileProccessor proccessor;
 
 
     public FileChooserActivityConfiguration ( Intent intent ) throws ClassNotFoundException, IllegalAccessException, InstantiationException
@@ -32,7 +34,7 @@ public class FileChooserActivityConfiguration
             fileComparator = new FileComparator();
         }
 
-        if ( intent.getStringExtra("FileChooserActivity.fileComparator") != null )
+        if ( intent.getStringExtra("FileChooserActivity.fileFilter") != null )
         {
             fileFilter = (FileFilter) Class.forName(intent.getStringExtra("FileChooserActivity.fileFilter")).newInstance();
         }
@@ -47,6 +49,18 @@ public class FileChooserActivityConfiguration
         }
 
         multiSelect = intent.getBooleanExtra( "FileChooserActivity.multiSelect", true );
+
+        if ( intent.getStringExtra("FileChooserActivity.fileProccessor") != null )
+        {
+            try
+            {
+                proccessor = ( FileProccessor ) Class.forName( intent.getStringExtra("FileChooserActivity.fileProccessor") ).newInstance();
+            }
+            catch ( Exception e )
+            {
+                Log.e("[YOPLP]", "Error instanciando el processor", e );
+            }
+        }
     }
 
     public boolean isCreateFolder()
@@ -72,5 +86,10 @@ public class FileChooserActivityConfiguration
     public boolean isMultiSelect()
     {
         return multiSelect;
+    }
+
+    public FileProccessor getProccessor()
+    {
+        return proccessor;
     }
 }
