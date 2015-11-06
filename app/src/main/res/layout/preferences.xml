@@ -11,7 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pref_autoplay_summary"
-            android:id="@+id/prefAutoplayCheck" />
+            android:id="@+id/prefAutoplayCheck"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,5 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pref_rememberTime_summary"
-        android:id="@+id/prefRememberTimeCheck" />
+        android:id="@+id/prefRememberTimeCheck"
+        style="@android:style/Widget.CompoundButton.CheckBox"/>
 </LinearLayout>

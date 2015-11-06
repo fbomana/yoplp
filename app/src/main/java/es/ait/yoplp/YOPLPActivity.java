@@ -100,7 +100,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                         file.delete();
                         if ( !PlayListManager.getInstance().isEmpty())
                         {
-                            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
                             int defaultValue = sharedPref.getInt("Selected track", 0);
                             PlayListManager.getInstance().setPointer(defaultValue);
                             iniciarReproduccion.set(true);
@@ -158,11 +158,12 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
 
             if ( iniciarReproduccion.get() )
             {
-                iniciarReproduccion.set( false );
-                PlayListManager.getInstance().navigateTo( seleccionado );
-                if ( PreferenceManager.getDefaultSharedPreferences( this ).getBoolean("prefAutoplay", false ) )
+                iniciarReproduccion.set(false);
+                PlayListManager.getInstance().navigateTo(seleccionado);
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences( this );
+                if ( sharedPref.getBoolean("prefAutoplay", false) )
                 {
-                    MediaPlayerServiceController.getInstance(this).play( getPreferences(Context.MODE_PRIVATE).getInt( "playing position", 0 ));
+                    MediaPlayerServiceController.getInstance(this).play( sharedPref.getInt("playing position", 0));
                     YOPLPServiceController.getInstance(this).timerServiceStart();
                 }
             }
@@ -471,10 +472,10 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
 
         if ( !PlayListManager.getInstance().isEmpty())
         {
-            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("Selected track", PlayListManager.getInstance().getPointer());
-            if ( PreferenceManager.getDefaultSharedPreferences( this ).getBoolean("prefRememberTime", false ))
+            if ( sharedPref.getBoolean("prefRememberTime", false ))
             {
                 MediaPlayer actualPlayer = MediaPlayerAdapter.getInstance().getActualPlayer();
                 if (actualPlayer.isPlaying())
