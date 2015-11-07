@@ -62,11 +62,11 @@ public class M3UWriter
      * @param playlist
      * @throws Exception
      */
-    public void write( PlayList<Track> playlist ) throws Exception
+    public void write( PlayList<Track> playlist ) throws IOException
     {
         if ( playlist == null || playlist.isEmpty())
         {
-            throw new Exception( "Empty o null playlist");
+            throw new IOException( "Empty o null playlist");
         }
 
         FileWriter fout = new FileWriter( m3uFile, false );

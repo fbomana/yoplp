@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -31,8 +32,11 @@ import es.ait.yoplp.m3u.M3UWriter;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.NewTimeMessage;
 import es.ait.yoplp.message.PlayListUpdatedMessage;
+import es.ait.yoplp.playlist.M3UFileFilter;
+import es.ait.yoplp.playlist.M3UFileProccessor;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.PlayListPositionChangeListener;
+import es.ait.yoplp.playlist.SavePlayListDialog;
 import es.ait.yoplp.playlist.Track;
 import es.ait.yoplp.settings.YOPLPSettingsActivity;
 
@@ -211,6 +215,29 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     listView.invalidateViews();
                     break;
                 }
+                case R.id.menuLoadList:
+                {
+                    Intent intent = new Intent(this, FileChooserActivity.class);
+                    intent.putExtra("FileChooserActivity.fileFilter", M3UFileFilter.class.getName());
+                    intent.putExtra("FileChooserActivity.fileComparator", FileComparator.class.getName());
+                    intent.putExtra("FileChooserActivity.fileProccessor", M3UFileProccessor.class.getName());
+                    intent.putExtra("FileChooserActivity.multiSelect", false);
+                    if (!PreferenceManager.getDefaultSharedPreferences( this ).getString("prefDefaultM3UFolder","").equals( "" ))
+                    {
+                        intent.putExtra("FileChooserActivity.initialFolder", PreferenceManager.getDefaultSharedPreferences( this ).getString("prefDefaultM3UFolder",""));
+                    }
+                    startActivity(intent);
+                    break;
+                }
+                case R.id.menuSaveList:
+                {
+                    if ( !PlayListManager.getInstance().isEmpty())
+                    {
+                        DialogFragment dialog = new SavePlayListDialog();
+                        dialog.show( getSupportFragmentManager(), "Save PlayList");
+                    }
+                    break;
+                }
                 case R.id.menuSortList:
                 {
                     YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
@@ -335,7 +362,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 }
                 case R.id.buttonDelete:
                 {
-                    if ( ((Track)PlayListManager.getInstance().get()).isSelected())
+                    if ( !PlayListManager.getInstance().isEmpty() && ((Track)PlayListManager.getInstance().get()).isSelected())
                     {
                         MediaPlayerAdapter.getInstance().stop();
                         YOPLPServiceController.getInstance( this ).timerServiceStop();

@@ -20,5 +20,7 @@
     <string name="pref_rememberTime">Remember time</string>
     <string name="pref_rememberTime_summary">Autoplay starts on the position of the track that was last played</string>
     <string name="pref_defaultM3UFolder">Default folder for playlists</string>
+    <string name="pldFileName">Playlist name</string>
+    <string name="menuLoadList">Load Play List</string>
 
 </resources>
