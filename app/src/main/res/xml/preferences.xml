@@ -4,15 +4,16 @@
         android:key="prefAutoplay"
         android:title="@string/pref_autoplay"
         android:summary="@string/pref_autoplay_summary"
-        android:defaultValue="true"/>
+        android:defaultValue="true"
+        android:disableDependentsState="false"/>
     <CheckBoxPreference
         android:key="prefRememberTime"
         android:title="@string/pref_rememberTime"
         android:summary="@string/pref_rememberTime_summary"
-        android:defaultValue="false"/>
+        android:defaultValue="false"
+        android:dependency="prefAutoplay"/>
     <es.ait.yoplp.settings.PreferenceFolderEdit
         android:key="prefDefaultM3UFolder"
         android:title="@string/pref_defaultM3UFolder"
         android:defaultValue=""/>
-
 </PreferenceScreen>
