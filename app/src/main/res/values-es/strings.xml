@@ -21,4 +21,6 @@
     <string name="pref_rememberTime">Recorder posición</string>
     <string name="pref_rememberTime_summary">Inicia la reproducción automática en la parte del track en la que se paró la aplicación.</string>
     <string name="pref_defaultM3UFolder">Directorio por defecto para listas de reproducción.</string>
+    <string name="pldFileName">Nombre de la lista de reproducción</string>
+    <string name="menuLoadList">Cargar lista de reproducción</string>
 </resources>
