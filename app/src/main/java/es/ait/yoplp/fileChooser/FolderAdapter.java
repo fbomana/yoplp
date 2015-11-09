@@ -84,7 +84,11 @@ public class FolderAdapter extends ArrayAdapter
             if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))
             {
-                File[] aux = new File("/mnt").listFiles();
+                File[] aux = new File("/storage").listFiles();
+                if ( aux == null || aux.length == 0 )
+                {
+                    aux = new File("/mnt").listFiles();
+                }
 
                 for (int i = 0; i < aux.length; i++)
                 {
