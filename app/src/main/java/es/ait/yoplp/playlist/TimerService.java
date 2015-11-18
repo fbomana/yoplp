@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ait.yoplp.MediaPlayerAdapter;
 import es.ait.yoplp.Utils;
+import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.NewTimeMessage;
 
@@ -44,14 +45,14 @@ public class TimerService extends IntentService
     {
         try
         {
-            MediaPlayer mp = MediaPlayerAdapter.getInstance().getActualPlayer();
+            YOPLPAudioPlayer player = YOPLPAudioPlayer.getInstance();
             while( !stop.get())
             {
                 try
                 {
-                    if (mp != null && mp.isPlaying())
+                    if ( player.isPlaying())
                     {
-                        BusManager.getBus().post(new NewTimeMessage(mp.getDuration() - mp.getCurrentPosition()));
+                        BusManager.getBus().post(new NewTimeMessage(player.getDuration() - player.getCurrentPosition()));
                     }
                 }
                 catch ( IllegalStateException e )
@@ -68,7 +69,6 @@ public class TimerService extends IntentService
                     Log.i("[YOPLP]", "Excepcion en onHandleItemSleep", e);
                     break;
                 }
-                mp = MediaPlayerAdapter.getInstance().getActualPlayer();
             }
             stop = new AtomicBoolean( false );
             stopSelf();

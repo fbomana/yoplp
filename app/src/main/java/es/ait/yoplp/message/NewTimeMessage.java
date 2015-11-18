@@ -8,14 +8,14 @@ import es.ait.yoplp.Utils;
 public class NewTimeMessage
 {
 
-    private int newTime;
+    private long newTime;
 
-    public NewTimeMessage( int newTime )
+    public NewTimeMessage( long newTime )
     {
         this.newTime = newTime;
     }
 
-    public int getNewTime()
+    public long getNewTime()
     {
         return newTime;
     }

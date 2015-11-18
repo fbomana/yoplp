@@ -25,13 +25,13 @@ public class MediaPlayerService extends Service
     {
         try
         {
-            if ( intent != null )
+            if (intent != null)
             {
                 switch (intent.getAction())
                 {
                     case ACTION_PLAY:
                     {
-                        MediaPlayerAdapter.getInstance().play( intent.getIntExtra("startTime", 0 ));
+                        MediaPlayerAdapter.getInstance().play(intent.getIntExtra("startTime", 0));
                         break;
                     }
                     case ACTION_PAUSE:
@@ -56,9 +56,6 @@ public class MediaPlayerService extends Service
                     }
                 }
             }
-        }
-        catch ( IOException e )
-        {
         }
         catch ( Throwable t )
         {

@@ -58,6 +58,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         try
         {
             super.onCreate(savedInstanceState);
+            MediaPlayerAdapter.getInstance( this );
+
             setContentView(R.layout.yoplp);
 
             ImageButton button = (ImageButton) findViewById(R.id.playButton);
@@ -234,7 +236,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     if ( !PlayListManager.getInstance().isEmpty())
                     {
                         DialogFragment dialog = new SavePlayListDialog();
-                        dialog.show( getSupportFragmentManager(), "Save PlayList");
+                        dialog.show(getSupportFragmentManager(), "Save PlayList");
                     }
                     break;
                 }
@@ -334,14 +336,6 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 {
                     PlayListManager.getInstance().moveSelectedUp();
                     seleccionado = PlayListManager.getInstance().getPointer();
-                    try
-                    {
-                        MediaPlayerAdapter.getInstance().refreshNextPlayer();
-                    }
-                    catch ( IOException e )
-                    {
-                        Log.e("[YOPLP]", "Error refreshing nextPlayer after buttonUp click", e);
-                    }
                     playListPositionChanged(PlayListManager.getInstance().getPointer());
                     break;
                 }
@@ -349,14 +343,6 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 {
                     PlayListManager.getInstance().moveSelectedDown();
                     seleccionado = PlayListManager.getInstance().getPointer();
-                    try
-                    {
-                        MediaPlayerAdapter.getInstance().refreshNextPlayer();
-                    }
-                    catch ( IOException e )
-                    {
-                        Log.e("[YOPLP]", "Error refreshing nextPlayer after buttonDown click", e);
-                    }
                     playListPositionChanged(PlayListManager.getInstance().getPointer());
                     break;
                 }
@@ -505,11 +491,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             editor.putInt("Selected track", PlayListManager.getInstance().getPointer());
             if ( sharedPref.getBoolean("prefRememberTime", false ))
             {
-                MediaPlayer actualPlayer = MediaPlayerAdapter.getInstance().getActualPlayer();
-                if ( actualPlayer != null && actualPlayer.isPlaying())
-                {
-                    editor.putInt("playing position", actualPlayer.getCurrentPosition());
-                }
+                editor.putLong("playing position", MediaPlayerAdapter.getInstance().getCurrentPosition());
             }
             editor.commit();
         }
