@@ -3,6 +3,7 @@ package es.ait.yoplp;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
@@ -50,5 +51,20 @@ public class Utils
         {
             Log.e("[YOPLP]", "Error dumping exception trace", ex );
         }
+    }
+
+    /**
+     * Gets the las .separated suffix of a file name in lowercase
+     * @param file
+     * @return
+     */
+    public static String getExtension( File file )
+    {
+        String name = file.getName().toLowerCase();
+        if ( name.lastIndexOf(".") != -1 )
+        {
+            return name.substring( name.lastIndexOf(".") + 1);
+        }
+        return null;
     }
 }

@@ -7,8 +7,10 @@ import android.os.Handler;
 
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.FrameworkSampleSource;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecTrackRenderer;
+import com.google.android.exoplayer.SampleSource;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
@@ -19,8 +21,11 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import es.ait.yoplp.Utils;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.Track;
@@ -103,7 +108,17 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
             player.stop();
         }
         Uri uri = Uri.fromFile( track.getFile() );
-        ExtractorSampleSource sampleSource = new ExtractorSampleSource(uri, dataSource, allocator, BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
+        SampleSource sampleSource = null;
+
+        // Work arround for more formats
+        if ( "flac".equals(Utils.getExtension( track.getFile())) || "ogg".equals(Utils.getExtension( track.getFile())) )
+        {
+            sampleSource = new FrameworkSampleSource( context, uri, null);
+        }
+        if ( sampleSource == null )
+        {
+            sampleSource = new ExtractorSampleSource(uri, dataSource, allocator, BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
+        }
         MediaCodecAudioTrackRenderer audioTrackRenderer = new MediaCodecAudioTrackRenderer( sampleSource,
                 null, true, mainHandler, this, AudioCapabilities.getCapabilities( context ));
 
