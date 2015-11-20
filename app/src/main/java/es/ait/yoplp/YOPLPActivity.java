@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
 import es.ait.yoplp.fileChooser.FileChooserActivity;
 import es.ait.yoplp.fileChooser.FileComparator;
 import es.ait.yoplp.fileChooser.MusicFileFilter;
@@ -32,6 +33,7 @@ import es.ait.yoplp.m3u.M3UWriter;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.NewTimeMessage;
 import es.ait.yoplp.message.PlayListUpdatedMessage;
+import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.M3UFileFilter;
 import es.ait.yoplp.playlist.M3UFileProccessor;
 import es.ait.yoplp.playlist.PlayListManager;
@@ -348,14 +350,16 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 }
                 case R.id.buttonDelete:
                 {
+                    boolean wasPlaying = false;
                     if ( !PlayListManager.getInstance().isEmpty() && ((Track)PlayListManager.getInstance().get()).isSelected())
                     {
+                        wasPlaying = YOPLPAudioPlayer.getInstance().isPlaying();
                         MediaPlayerAdapter.getInstance().stop();
                         YOPLPServiceController.getInstance( this ).timerServiceStop();
                     }
                     PlayListManager.getInstance().removeSelected();
                     seleccionado = PlayListManager.getInstance().getPointer();
-                    if ( !PlayListManager.getInstance().isEmpty())
+                    if ( !PlayListManager.getInstance().isEmpty() && wasPlaying )
                     {
                         MediaPlayerServiceController.getInstance( this ).play();
                         YOPLPServiceController.getInstance( this ).timerServiceStart();
@@ -540,5 +544,16 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             Utils.dumpException( getBaseContext(), t );
             throw t;
         }
+    }
+
+    /**
+     * Pasamos de una canción a la siguiente.
+     *
+     * @param message
+     */
+    @Subscribe
+    public void trackEndedMessage( TrackEndedMessage message )
+    {
+        MediaPlayerAdapter.getInstance().next();
     }
 }

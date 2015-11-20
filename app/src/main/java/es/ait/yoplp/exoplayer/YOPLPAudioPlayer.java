@@ -19,7 +19,10 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import es.ait.yoplp.message.BusManager;
+import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.Track;
 import es.ait.yoplp.settings.YOPLPSettingsActivity;
 
@@ -64,6 +67,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     private DataSource dataSource;
     private Allocator allocator;
     private Context context;
+    private AtomicBoolean playing = new AtomicBoolean( false );
 
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
@@ -81,7 +85,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
      */
     public void start( Track track )
     {
-        start( track, 0 );
+        start(track, 0);
     }
 
     /**
@@ -92,7 +96,9 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
      */
     public void start( Track track, long position )
     {
-        if ( player.getPlaybackState() != ExoPlayer.STATE_ENDED )
+        if ( player.getPlaybackState() == ExoPlayer.STATE_READY ||
+            player.getPlaybackState() == ExoPlayer.STATE_BUFFERING ||
+            player.getPlaybackState() == ExoPlayer.STATE_PREPARING )
         {
             player.stop();
         }
@@ -104,6 +110,8 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         player.addListener(this);
         player.prepare(audioTrackRenderer);
         player.seekTo(position);
+        player.setPlayWhenReady( true );
+        playing.set(true);
     }
 
     /**
@@ -111,8 +119,9 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
      */
     public void stop()
     {
-        if ( player.getPlaybackState() != ExoPlayer.STATE_ENDED )
+        if ( playing.get())
         {
+            playing.set( false );
             player.stop();
             player.seekTo(0);
         }
@@ -137,7 +146,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
      */
     public boolean isPlaying()
     {
-        return player.getPlaybackState() != ExoPlayer.STATE_ENDED && player.getPlaybackState() != ExoPlayer.STATE_IDLE;
+        return playing.get();
     }
 
 
@@ -194,6 +203,11 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState)
     {
+        if ( playbackState == ExoPlayer.STATE_ENDED )
+        {
+            playing.set( false );
+            BusManager.getBus().post( new TrackEndedMessage() );
+        }
     }
 
     @Override

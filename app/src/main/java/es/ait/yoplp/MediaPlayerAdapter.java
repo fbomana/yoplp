@@ -3,9 +3,12 @@ package es.ait.yoplp;
 import android.content.Context;
 import android.media.MediaPlayer;
 
+import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
 
 import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
+import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.Track;
 
@@ -63,7 +66,7 @@ public class MediaPlayerAdapter
 
     public void pause()
     {
-        if ( !YOPLPAudioPlayer.getInstance().isPlaying() )
+        if ( YOPLPAudioPlayer.getInstance().isPlaying() )
         {
             YOPLPAudioPlayer.getInstance().togglePausePlay();
         }
@@ -100,4 +103,6 @@ public class MediaPlayerAdapter
     {
         return YOPLPAudioPlayer.getInstance().getCurrentPosition();
     }
+
+
 }
