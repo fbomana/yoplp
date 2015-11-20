@@ -32,12 +32,18 @@ import es.ait.yoplp.m3u.M3UReader;
 import es.ait.yoplp.m3u.M3UWriter;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.NewTimeMessage;
+import es.ait.yoplp.message.NextMessage;
+import es.ait.yoplp.message.PauseMessage;
 import es.ait.yoplp.message.PlayListUpdatedMessage;
+import es.ait.yoplp.message.PlayMessage;
+import es.ait.yoplp.message.PreviousMessage;
+import es.ait.yoplp.message.StopMessage;
 import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.M3UFileFilter;
 import es.ait.yoplp.playlist.M3UFileProccessor;
 import es.ait.yoplp.playlist.PlayListManager;
 import es.ait.yoplp.playlist.PlayListPositionChangeListener;
+import es.ait.yoplp.playlist.PlayListService;
 import es.ait.yoplp.playlist.SavePlayListDialog;
 import es.ait.yoplp.playlist.Track;
 import es.ait.yoplp.settings.YOPLPSettingsActivity;
@@ -60,7 +66,9 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         try
         {
             super.onCreate(savedInstanceState);
-            MediaPlayerAdapter.getInstance( this );
+
+            Intent audioServiceIntent = new Intent(this, PlayListService.class );
+            startService( audioServiceIntent );
 
             setContentView(R.layout.yoplp);
 
@@ -145,7 +153,9 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         try
         {
             super.onResume();
-            BusManager.getBus().register( this );
+            BusManager.getBus().register(this);
+            Log.e("[YOPLP]", "En el método onResume de YOPLPActivity");
+            Log.e("[YOPLP]", "Bus: " + BusManager.getBus().toString());
             this.seleccionado = PlayListManager.getInstance().getPointer();
 
             listView.setAdapter(new PlayListAdapter(this, R.id.playListView, PlayListManager.getInstance()));
@@ -160,7 +170,6 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     textSongAuthor.setText(((Track) PlayListManager.getInstance().get()).getAuthor());
                 }
                 YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
-                YOPLPServiceController.getInstance( this ).timerServiceStart();
             }
             selecciontModeButton.setEnabled( !PlayListManager.getInstance().isEmpty() );
 
@@ -171,8 +180,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences( this );
                 if ( sharedPref.getBoolean("prefAutoplay", false) )
                 {
-                    MediaPlayerServiceController.getInstance(this).play( sharedPref.getInt("playing position", 0));
-                    YOPLPServiceController.getInstance(this).timerServiceStart();
+                    BusManager.getBus().post(new PlayMessage( sharedPref.getInt("playing position", 0)));
                 }
             }
         }
@@ -213,7 +221,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 case R.id.menuClearList:
                 {
                     YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
-                    MediaPlayerServiceController.getInstance( this ).stop();
+                    BusManager.getBus().post( new StopMessage());
                     PlayListManager.getInstance().clear();
                     this.seleccionado = 0;
                     listView.invalidateViews();
@@ -291,29 +299,27 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 case R.id.playButton:
                 {
-                    MediaPlayerServiceController.getInstance( this ).play();
-                    YOPLPServiceController.getInstance( this ).timerServiceStart();
+                    BusManager.getBus().post( new PlayMessage());
                     break;
                 }
                 case R.id.stopButton:
                 {
-                    MediaPlayerServiceController.getInstance( this ).stop();
-                    YOPLPServiceController.getInstance( this ).timerServiceStop();
+                    BusManager.getBus().post(new StopMessage());
                     break;
                 }
                 case R.id.pauseButtopn:
                 {
-                    MediaPlayerServiceController.getInstance( this ).pause();
+                    BusManager.getBus().post(new PauseMessage());
                     break;
                 }
                 case R.id.previousButton:
                 {
-                    MediaPlayerServiceController.getInstance( this ).previous();
+                    BusManager.getBus().post(new PreviousMessage());
                     break;
                 }
                 case R.id.nextButton:
                 {
-                    MediaPlayerServiceController.getInstance( this ).next();
+                    BusManager.getBus().post( new NextMessage());
                     break;
                 }
                 case R.id.buttonSelecctionMode:
@@ -354,15 +360,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     if ( !PlayListManager.getInstance().isEmpty() && ((Track)PlayListManager.getInstance().get()).isSelected())
                     {
                         wasPlaying = YOPLPAudioPlayer.getInstance().isPlaying();
-                        MediaPlayerAdapter.getInstance().stop();
-                        YOPLPServiceController.getInstance( this ).timerServiceStop();
+                        BusManager.getBus().post( new StopMessage());
+
                     }
                     PlayListManager.getInstance().removeSelected();
                     seleccionado = PlayListManager.getInstance().getPointer();
                     if ( !PlayListManager.getInstance().isEmpty() && wasPlaying )
                     {
-                        MediaPlayerServiceController.getInstance( this ).play();
-                        YOPLPServiceController.getInstance( this ).timerServiceStart();
+                        BusManager.getBus().post( new PlayMessage());
                     }
                     playListPositionChanged(PlayListManager.getInstance().getPointer());
                     break;
@@ -437,9 +442,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 if (PlayListManager.getInstance().navigateTo(position))
                 {
-                    MediaPlayerServiceController.getInstance(this).stop();
-                    MediaPlayerServiceController.getInstance(this).play();
-                    YOPLPServiceController.getInstance(this).timerServiceStart();
+                    BusManager.getBus().post(new StopMessage());
+                    BusManager.getBus().post(new PlayMessage());
                 }
             }
         }
@@ -459,8 +463,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     {
         try
         {
-            BusManager.getBus().unregister( this );
-            YOPLPServiceController.getInstance( this ).timerServiceStop();
+            BusManager.getBus().unregister(this);
             if ( !PlayListManager.getInstance().isEmpty())
             {
                 Log.i("[YOPLP]", "Writing playlist to internal storage");
@@ -495,11 +498,15 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             editor.putInt("Selected track", PlayListManager.getInstance().getPointer());
             if ( sharedPref.getBoolean("prefRememberTime", false ))
             {
-                editor.putLong("playing position", MediaPlayerAdapter.getInstance().getCurrentPosition());
+                editor.putLong("playing position", YOPLPAudioPlayer.getInstance().getCurrentPosition());
             }
             editor.commit();
         }
+        // Detenemos el servicio de reperoducción al detener la aplicación,.
+        /* Intent audioServiceIntent = new Intent( this, PlayListService.class );
+        stopService( audioServiceIntent );*/
     }
+
     /*
      ***************************** Bus listeners **************************************
      */
@@ -544,16 +551,5 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             Utils.dumpException( getBaseContext(), t );
             throw t;
         }
-    }
-
-    /**
-     * Pasamos de una canción a la siguiente.
-     *
-     * @param message
-     */
-    @Subscribe
-    public void trackEndedMessage( TrackEndedMessage message )
-    {
-        MediaPlayerAdapter.getInstance().next();
     }
 }

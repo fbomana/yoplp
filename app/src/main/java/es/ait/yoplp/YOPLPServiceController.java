@@ -2,8 +2,9 @@ package es.ait.yoplp;
 
 import android.content.Intent;
 
+import es.ait.yoplp.message.BusManager;
+import es.ait.yoplp.message.PlayMessage;
 import es.ait.yoplp.playlist.PlayListInfoService;
-import es.ait.yoplp.playlist.TimerService;
 
 /**
  * Created by aitkiar on 29/09/15.
@@ -27,18 +28,6 @@ public class YOPLPServiceController
         return instance;
     }
 
-    protected void timerServiceStart()
-    {
-        Intent timerServie = new Intent( TimerService.ACTION_START, null, activity, TimerService.class );
-        activity.startService(timerServie);
-    }
-
-    protected void timerServiceStop()
-    {
-        Intent timerServie = new Intent( TimerService.ACTION_STOP, null, activity, TimerService.class );
-        activity.startService(timerServie);
-    }
-
     protected void playListInfoServiceStart()
     {
         Intent updateService = new Intent("AAAAA", null, activity, PlayListInfoService.class);
@@ -48,7 +37,6 @@ public class YOPLPServiceController
     protected void playListInfoServiceKill()
     {
         Intent updateService = new Intent("AAAAA", null, activity, PlayListInfoService.class);
-        activity.stopService( updateService );
+        activity.stopService(updateService);
     }
-
 }
