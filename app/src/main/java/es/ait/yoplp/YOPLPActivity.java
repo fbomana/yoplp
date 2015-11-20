@@ -21,6 +21,7 @@ import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
@@ -46,6 +47,7 @@ import es.ait.yoplp.playlist.PlayListPositionChangeListener;
 import es.ait.yoplp.playlist.PlayListService;
 import es.ait.yoplp.playlist.SavePlayListDialog;
 import es.ait.yoplp.playlist.Track;
+import es.ait.yoplp.playlist.YOPLPPlayingThread;
 import es.ait.yoplp.settings.YOPLPSettingsActivity;
 
 public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener
@@ -66,6 +68,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         try
         {
             super.onCreate(savedInstanceState);
+
+            YOPLPPlayingThread.getInstance( this ); // This way the runnable item it's created and associated to the bus before onResume method
 
             Intent audioServiceIntent = new Intent(this, PlayListService.class );
             startService( audioServiceIntent );
@@ -180,7 +184,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences( this );
                 if ( sharedPref.getBoolean("prefAutoplay", false) )
                 {
-                    BusManager.getBus().post(new PlayMessage( sharedPref.getInt("playing position", 0)));
+                    Log.e("[YOPLP]", new Date().getTime() + " Mensaje de iniciar reproducción");
+                    BusManager.getBus().post(new PlayMessage(sharedPref.getLong("playing position", 0)));
                 }
             }
         }

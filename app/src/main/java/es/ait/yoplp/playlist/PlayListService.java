@@ -19,20 +19,12 @@ public class PlayListService extends Service
     public void onCreate()
     {
         Log.e("[YOPLP", "En el método onCreate del servicio");
-        playingThread = new YOPLPPlayingThread(YOPLPAudioPlayer.getInstance(getApplicationContext()));
+        playingThread = YOPLPPlayingThread.getInstance( getApplicationContext());
         Thread thread = new Thread( playingThread );
         thread.start();
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
-        super.onStartCommand( intent, flags, startId );
-        Log.e("[YOPLP", "En el método onStart del servicio");
-        return START_STICKY;
-    }
-
-        @Override
     public void onDestroy()
     {
         playingThread.stop();

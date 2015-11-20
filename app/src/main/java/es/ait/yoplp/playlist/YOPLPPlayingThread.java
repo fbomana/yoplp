@@ -1,8 +1,11 @@
 package es.ait.yoplp.playlist;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.squareup.otto.Subscribe;
+
+import java.util.Date;
 
 import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
 import es.ait.yoplp.message.BusManager;
@@ -19,16 +22,29 @@ import es.ait.yoplp.message.TrackEndedMessage;
  */
 public class YOPLPPlayingThread implements Runnable
 {
+    private static YOPLPPlayingThread instance;
+
     private YOPLPAudioPlayer player;
     private boolean stop = false;
 
-    public YOPLPPlayingThread ( YOPLPAudioPlayer player )
+    public static YOPLPPlayingThread getInstance( Context context )
+    {
+        if ( instance == null )
+        {
+            instance = new YOPLPPlayingThread( YOPLPAudioPlayer.getInstance( context ));
+        }
+        return instance;
+    }
+
+    private YOPLPPlayingThread ( YOPLPAudioPlayer player )
     {
         Log.e("[YOPLP]", "En el constructor de YOPLPPlayingThread");
         this.player = player;
         Log.e("[YOPLP]", "Bus: " + BusManager.getBus().toString());
-        BusManager.getBus().register( this );
+        BusManager.getBus().register(this);
+        Log.e("[YOPLP]", new Date().getTime() + " Registrado en el bus");
     }
+
     public void stop()
     {
         this.stop = true;
