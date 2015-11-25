@@ -14,6 +14,7 @@ import es.ait.yoplp.message.NextMessage;
 import es.ait.yoplp.message.PauseMessage;
 import es.ait.yoplp.message.PlayMessage;
 import es.ait.yoplp.message.PreviousMessage;
+import es.ait.yoplp.message.SeekMessage;
 import es.ait.yoplp.message.StopMessage;
 import es.ait.yoplp.message.TrackEndedMessage;
 
@@ -57,7 +58,7 @@ public class YOPLPPlayingThread implements Runnable
         {
             if ( player.isPlaying())
             {
-                BusManager.getBus().post(new NewTimeMessage(player.getDuration() - player.getCurrentPosition()));
+                BusManager.getBus().post(new NewTimeMessage( player.getCurrentPosition() ));
             }
             try
             {
@@ -148,6 +149,13 @@ public class YOPLPPlayingThread implements Runnable
         }
     }
 
+    @Subscribe
+    public void seekMessage( SeekMessage message )
+    {
+        player.seekTo( message.getPosition() );
+    }
+
+
     /**
      * Pasamos de una canción a la siguiente.
      *
@@ -156,6 +164,7 @@ public class YOPLPPlayingThread implements Runnable
     @Subscribe
     public void trackEndedMessage( TrackEndedMessage message )
     {
-        nextMessage( new NextMessage());
+        nextMessage(new NextMessage());
     }
+
 }

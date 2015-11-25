@@ -76,6 +76,10 @@
             android:text="10:04"
             android:textSize="60sp"
             android:textColor="@android:color/primary_text_dark"/>
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekbarTime"/>
         <TextView
             android:id="@+id/textSongName"
             android:layout_width="match_parent"

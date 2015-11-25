@@ -154,6 +154,15 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     }
 
 
+    public void seekTo( long position )
+    {
+        player.seekTo( position );
+        if ( !playing.get())
+        {
+            player.setPlayWhenReady( true );
+            playing.set( true );
+        }
+    }
     /**
      * Check if the player is trying to play something. When the player it's in IDDLE or ENDED state
      * it's considered that it's not playing.
@@ -228,7 +237,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     @Override
     public void onPlayWhenReadyCommitted()
     {
-
+        playing.set( true );
     }
 
     @Override

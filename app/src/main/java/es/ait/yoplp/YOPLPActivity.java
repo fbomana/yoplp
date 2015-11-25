@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -38,6 +39,7 @@ import es.ait.yoplp.message.PauseMessage;
 import es.ait.yoplp.message.PlayListUpdatedMessage;
 import es.ait.yoplp.message.PlayMessage;
 import es.ait.yoplp.message.PreviousMessage;
+import es.ait.yoplp.message.SeekMessage;
 import es.ait.yoplp.message.StopMessage;
 import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.M3UFileFilter;
@@ -50,7 +52,7 @@ import es.ait.yoplp.playlist.Track;
 import es.ait.yoplp.playlist.YOPLPPlayingThread;
 import es.ait.yoplp.settings.YOPLPSettingsActivity;
 
-public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener
+public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener
 {
     private int seleccionado = 0;
     private TextView textSongAlbum;
@@ -106,6 +108,9 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
 
             textSongAlbum = (TextView) findViewById(R.id.textSongAlbum);
             textSongAuthor = (TextView) findViewById(R.id.textSongAuthor);
+
+            SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
+            seekBar.setOnSeekBarChangeListener( this );
 
             iniciarReproduccion = new AtomicBoolean( false );
             if (PlayListManager.getInstance().isEmpty())
@@ -324,7 +329,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 }
                 case R.id.nextButton:
                 {
-                    BusManager.getBus().post( new NextMessage());
+                    BusManager.getBus().post(new NextMessage());
                     break;
                 }
                 case R.id.buttonSelecctionMode:
@@ -417,6 +422,11 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             Track track = (Track) PlayListManager.getInstance().get(pointer);
             ((TextView) findViewById(R.id.textSongName)).setText(track.getTitle());
             ((TextView) findViewById(R.id.textSongTimeLeft)).setText(track.getDuration());
+
+            SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
+            seekBar.setMax( new Long( track.getDurationMillis()).intValue());
+            seekBar.setProgress( 0 );
+
             if (textSongAlbum != null)
             {
                 textSongAlbum.setText(track.getAlbum());
@@ -507,9 +517,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             }
             editor.commit();
         }
-        // Detenemos el servicio de reperoducción al detener la aplicación,.
-        /* Intent audioServiceIntent = new Intent( this, PlayListService.class );
-        stopService( audioServiceIntent );*/
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        Intent audioServiceIntent = new Intent( this, PlayListService.class );
+        stopService(audioServiceIntent);
     }
 
     /*
@@ -526,7 +541,11 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void run()
                 {
-                    ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getNewTimeAsString());
+                    if ( PlayListManager.getInstance().get() != null )
+                    {
+                        ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getNewTimeAsString(((Track) PlayListManager.getInstance().get()).getDurationMillis()));
+                        ((SeekBar) findViewById(R.id.seekbarTime)).setProgress(new Long(message.getNewTime()).intValue());
+                    }
                 }
             });
         }
@@ -557,4 +576,31 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             throw t;
         }
     }
+
+    // -------------------------------------------------------------------------------------------
+    // Controls Listeners
+    // -------------------------------------------------------------------------------------------
+
+    // --- SeekBar Listener ----------------------------------------
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+    {
+        if ( fromUser )
+        {
+            BusManager.getBus().post(new SeekMessage(progress));
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar)
+    {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar)
+    {
+    }
+
+
 }

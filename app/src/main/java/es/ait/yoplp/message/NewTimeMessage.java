@@ -20,8 +20,8 @@ public class NewTimeMessage
         return newTime;
     }
 
-    public String getNewTimeAsString()
+    public String getNewTimeAsString( long duration )
     {
-        return Utils.milisToText( newTime );
+        return Utils.milisToText( duration - newTime );
     }
 }
