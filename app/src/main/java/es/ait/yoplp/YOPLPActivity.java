@@ -41,7 +41,6 @@ import es.ait.yoplp.message.PlayMessage;
 import es.ait.yoplp.message.PreviousMessage;
 import es.ait.yoplp.message.SeekMessage;
 import es.ait.yoplp.message.StopMessage;
-import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.M3UFileFilter;
 import es.ait.yoplp.playlist.M3UFileProccessor;
 import es.ait.yoplp.playlist.PlayListManager;
@@ -64,6 +63,11 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     private ListView listView;
     private AtomicBoolean iniciarReproduccion;
 
+
+    // -------------------------------------------------------------------------------------------
+    // Activity Lifecicle methods
+    // -------------------------------------------------------------------------------------------
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -71,10 +75,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         {
             super.onCreate(savedInstanceState);
 
-            YOPLPPlayingThread.getInstance( this ); // This way the runnable item it's created and associated to the bus before onResume method
+            Log.e("[YOPLP]", "------------------------------ onCre4ate ---------------------------------------");
+            YOPLPPlayingThread.getInstance(this); // This way the runnable item it's created and associated to the bus before onResume method
 
-            Intent audioServiceIntent = new Intent(this, PlayListService.class );
-            startService( audioServiceIntent );
+            if ( !Utils.isMyServiceRunning( this, PlayListService.class.getName()))
+            {
+                Intent audioServiceIntent = new Intent(this, PlayListService.class);
+                startService(audioServiceIntent);
+            }
 
             setContentView(R.layout.yoplp);
 
@@ -110,7 +118,11 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             textSongAuthor = (TextView) findViewById(R.id.textSongAuthor);
 
             SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
-            seekBar.setOnSeekBarChangeListener( this );
+            seekBar.setOnSeekBarChangeListener(this);
+            if ( YOPLPAudioPlayer.getInstance().isPlaying() )
+            {
+                seekBar.setMax( new Long ( YOPLPAudioPlayer.getInstance().getDuration()).intValue());
+            }
 
             iniciarReproduccion = new AtomicBoolean( false );
             if (PlayListManager.getInstance().isEmpty())
@@ -151,6 +163,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     protected void onStart()
     {
         super.onStart();
+        Log.e("[YOPLP]", "------------------------------ onStart ---------------------------------------");
     }
 
     /**
@@ -162,9 +175,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         try
         {
             super.onResume();
+            Log.e("[YOPLP]", "------------------------------ onResume ---------------------------------------");
             BusManager.getBus().register(this);
-            Log.e("[YOPLP]", "En el método onResume de YOPLPActivity");
-            Log.e("[YOPLP]", "Bus: " + BusManager.getBus().toString());
             this.seleccionado = PlayListManager.getInstance().getPointer();
 
             listView.setAdapter(new PlayListAdapter(this, R.id.playListView, PlayListManager.getInstance()));
@@ -180,7 +192,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 }
                 YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
             }
-            selecciontModeButton.setEnabled( !PlayListManager.getInstance().isEmpty() );
+            selecciontModeButton.setEnabled(!PlayListManager.getInstance().isEmpty());
 
             if ( iniciarReproduccion.get() )
             {
@@ -201,92 +213,32 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_play_list, menu);
-        return true;
-    }
 
+    /**
+     * In this method we cleanup whatever it's still running, and save the state in order to restore it in
+     * the onResume call.
+     */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
+    protected void onPause()
     {
         try
         {
-            int id = item.getItemId();
-
-            //noinspection SimplifiableIfStatement
-            switch( id )
+            Log.e("[YOPLP]", "------------------------------ onPause ---------------------------------------");
+            BusManager.getBus().unregister(this);
+            if ( !PlayListManager.getInstance().isEmpty())
             {
-                case R.id.menuAddFiles:
+                Log.i("[YOPLP]", "Writing playlist to internal storage");
+                File file = new File(getBaseContext().getFilesDir(), "yoplpsavedplaylist.m3u");
+                try
                 {
-                    Intent intent = new Intent(this, FileChooserActivity.class);
-                    intent.putExtra("FileChooserActivity.fileFilter", MusicFileFilter.class.getName());
-                    intent.putExtra("FileChooserActivity.fileComparator", FileComparator.class.getName());
-                    intent.putExtra("FileChooserActivity.fileProccessor", MusicFileProccessor.class.getName());
-                    startActivity(intent);
-                    break;
+                    M3UWriter.getInstance( file ).write( PlayListManager.getInstance());
                 }
-                case R.id.menuClearList:
+                catch ( Exception e )
                 {
-                    YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
-                    BusManager.getBus().post( new StopMessage());
-                    PlayListManager.getInstance().clear();
-                    this.seleccionado = 0;
-                    listView.invalidateViews();
-                    break;
-                }
-                case R.id.menuLoadList:
-                {
-                    Intent intent = new Intent(this, FileChooserActivity.class);
-                    intent.putExtra("FileChooserActivity.fileFilter", M3UFileFilter.class.getName());
-                    intent.putExtra("FileChooserActivity.fileComparator", FileComparator.class.getName());
-                    intent.putExtra("FileChooserActivity.fileProccessor", M3UFileProccessor.class.getName());
-                    intent.putExtra("FileChooserActivity.multiSelect", false);
-                    if (!PreferenceManager.getDefaultSharedPreferences( this ).getString("prefDefaultM3UFolder","").equals( "" ))
-                    {
-                        intent.putExtra("FileChooserActivity.initialFolder", PreferenceManager.getDefaultSharedPreferences( this ).getString("prefDefaultM3UFolder",""));
-                    }
-                    startActivity(intent);
-                    break;
-                }
-                case R.id.menuSaveList:
-                {
-                    if ( !PlayListManager.getInstance().isEmpty())
-                    {
-                        DialogFragment dialog = new SavePlayListDialog();
-                        dialog.show(getSupportFragmentManager(), "Save PlayList");
-                    }
-                    break;
-                }
-                case R.id.menuSortList:
-                {
-                    YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
-                    PlayListManager.getInstance().sort();
-                    seleccionado = PlayListManager.getInstance().getPointer();
-                    YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
-                    listView.invalidateViews();
-                    break;
-                }
-                case R.id.menuRandomizeList:
-                {
-                    YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
-                    PlayListManager.getInstance().randomize();
-                    seleccionado = PlayListManager.getInstance().getPointer();
-                    YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
-                    listView.invalidateViews();
-                    break;
-                }
-                case R.id.action_settings:
-                {
-                    Intent intent = new Intent(this, YOPLPSettingsActivity.class);
-                    startActivity(intent);
-                    break;
+                    Log.e("[YOPLP]", "Error while writing last playlist to internal storage", e );
                 }
             }
-
-            return super.onOptionsItemSelected(item);
+            super.onPause();
         }
         catch ( Throwable t )
         {
@@ -295,6 +247,157 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+
+        Log.e("[YOPLP]", "------------------------------ onStop ---------------------------------------");
+        if ( !PlayListManager.getInstance().isEmpty())
+        {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("Selected track", PlayListManager.getInstance().getPointer());
+            if ( sharedPref.getBoolean("prefRememberTime", false ))
+            {
+                editor.putLong("playing position", YOPLPAudioPlayer.getInstance().getCurrentPosition());
+            }
+            editor.commit();
+        }
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        Log.e("[YOPLP]", "------------------------------ onDestroy ---------------------------------------");
+        Intent audioServiceIntent = new Intent( this, PlayListService.class );
+        stopService(audioServiceIntent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        Log.e("[YOPLP]", "------------------------------ onCreateOptionsMenu ---------------------------------------");
+        getMenuInflater().inflate(R.menu.menu_play_list, menu);
+        return true;
+    }
+
+    // -------------------------------------------------------------------------------------------
+    // Bus/Message Listeners
+    // -------------------------------------------------------------------------------------------
+
+    @Subscribe
+    public void newTimeMessage( final NewTimeMessage message )
+    {
+        try
+        {
+            runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    PlayListManager<Track> plm = PlayListManager.getInstance();
+                    Track track = plm.get();
+                    if ( track != null )
+                    {
+                        SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
+                        ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getNewTimeAsString(track.getDurationMillis()));
+                        seekBar.setProgress(new Long(message.getNewTime()).intValue());
+
+                    }
+                }
+            });
+        }
+        catch ( Throwable t )
+        {
+            Utils.dumpException( getBaseContext(), t );
+            throw t;
+        }
+    }
+
+    @Subscribe
+    public void playListUpdatedMessage( PlayListUpdatedMessage message )
+    {
+        try
+        {
+            runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    ((ListView) findViewById(R.id.playListView)).invalidateViews();
+                }
+            });
+        }
+        catch ( Throwable t )
+        {
+            Utils.dumpException( getBaseContext(), t );
+            throw t;
+        }
+    }
+
+    @Override
+    public void playListPositionChanged(int pointer)
+    {
+        try
+        {
+            if (PlayListManager.getInstance().size() > seleccionado)
+            {
+                ((PlayListManager<Track>) PlayListManager.getInstance()).get(seleccionado).setPlaying(false);
+            }
+            ((PlayListManager<Track>) PlayListManager.getInstance()).get(pointer).setPlaying(true);
+
+            listView.invalidateViews();
+
+            if (pointer > seleccionado && pointer < listView.getAdapter().getCount() - 1)
+            {
+                listView.smoothScrollToPosition(pointer + 1);
+            }
+            else if (pointer < seleccionado && pointer > 0)
+            {
+                listView.smoothScrollToPosition(pointer - 1);
+            }
+            else
+            {
+                listView.smoothScrollToPosition(pointer);
+            }
+            seleccionado = pointer;
+
+            Track track = (Track) PlayListManager.getInstance().get(pointer);
+            ((TextView) findViewById(R.id.textSongName)).setText(track.getTitle());
+            ((TextView) findViewById(R.id.textSongTimeLeft)).setText(track.getDuration());
+
+            SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
+            seekBar.setMax( new Long( track.getDurationMillis()).intValue());
+            seekBar.setProgress( 0 );
+
+            if (textSongAlbum != null)
+            {
+                textSongAlbum.setText(track.getAlbum());
+            }
+            if (textSongAuthor != null)
+            {
+                textSongAuthor.setText(track.getAuthor());
+            }
+        }
+        catch ( Throwable t )
+        {
+            Utils.dumpException( getBaseContext(), t );
+            throw t;
+        }
+    }
+
+    // -------------------------------------------------------------------------------------------
+    // Controls Listeners
+    // -------------------------------------------------------------------------------------------
+
+    // --- Buttons Listener ----------------------------------------
+
+    /**
+     * Method that controls what happens when we click a button on the interface
+     * @param v
+     */
     @Override
     public void onClick(View v)
     {
@@ -392,56 +495,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public void playListPositionChanged(int pointer)
-    {
-        try
-        {
-            if (PlayListManager.getInstance().size() > seleccionado)
-            {
-                ((PlayListManager<Track>) PlayListManager.getInstance()).get(seleccionado).setPlaying(false);
-            }
-            ((PlayListManager<Track>) PlayListManager.getInstance()).get(pointer).setPlaying(true);
-
-            listView.invalidateViews();
-
-            if (pointer > seleccionado && pointer < listView.getAdapter().getCount() - 1)
-            {
-                listView.smoothScrollToPosition(pointer + 1);
-            }
-            else if (pointer < seleccionado && pointer > 0)
-            {
-                listView.smoothScrollToPosition(pointer - 1);
-            }
-            else
-            {
-                listView.smoothScrollToPosition(pointer);
-            }
-            seleccionado = pointer;
-
-            Track track = (Track) PlayListManager.getInstance().get(pointer);
-            ((TextView) findViewById(R.id.textSongName)).setText(track.getTitle());
-            ((TextView) findViewById(R.id.textSongTimeLeft)).setText(track.getDuration());
-
-            SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
-            seekBar.setMax( new Long( track.getDurationMillis()).intValue());
-            seekBar.setProgress( 0 );
-
-            if (textSongAlbum != null)
-            {
-                textSongAlbum.setText(track.getAlbum());
-            }
-            if (textSongAuthor != null)
-            {
-                textSongAuthor.setText(track.getAuthor());
-            }
-        }
-        catch ( Throwable t )
-        {
-            Utils.dumpException( getBaseContext(), t );
-            throw t;
-        }
-    }
+    // --- ListView onClick Listener ----------------------------------------
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
@@ -469,106 +523,86 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    /**
-     * In this method we cleanup whatever it's still running, and save the state in order to restore it in
-     * the onResume call.
-     */
+    // --- Menu Listener ----------------------------------------
+
     @Override
-    protected void onPause()
+    public boolean onOptionsItemSelected(MenuItem item)
     {
         try
         {
-            BusManager.getBus().unregister(this);
-            if ( !PlayListManager.getInstance().isEmpty())
+            int id = item.getItemId();
+
+            //noinspection SimplifiableIfStatement
+            switch( id )
             {
-                Log.i("[YOPLP]", "Writing playlist to internal storage");
-                File file = new File(getBaseContext().getFilesDir(), "yoplpsavedplaylist.m3u");
-                try
+                case R.id.menuAddFiles:
                 {
-                    M3UWriter.getInstance( file ).write( PlayListManager.getInstance());
+                    Intent intent = new Intent(this, FileChooserActivity.class);
+                    intent.putExtra("FileChooserActivity.fileFilter", MusicFileFilter.class.getName());
+                    intent.putExtra("FileChooserActivity.fileComparator", FileComparator.class.getName());
+                    intent.putExtra("FileChooserActivity.fileProccessor", MusicFileProccessor.class.getName());
+                    startActivity(intent);
+                    break;
                 }
-                catch ( Exception e )
+                case R.id.menuClearList:
                 {
-                    Log.e("[YOPLP]", "Error while writing last playlist to internal storage", e );
+                    YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
+                    BusManager.getBus().post( new StopMessage());
+                    PlayListManager.getInstance().clear();
+                    this.seleccionado = 0;
+                    listView.invalidateViews();
+                    break;
                 }
-            }
-            super.onPause();
-        }
-        catch ( Throwable t )
-        {
-            Utils.dumpException( getBaseContext(), t );
-            throw t;
-        }
-    }
-
-    @Override
-    public void onStop()
-    {
-        super.onStop();
-
-        if ( !PlayListManager.getInstance().isEmpty())
-        {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putInt("Selected track", PlayListManager.getInstance().getPointer());
-            if ( sharedPref.getBoolean("prefRememberTime", false ))
-            {
-                editor.putLong("playing position", YOPLPAudioPlayer.getInstance().getCurrentPosition());
-            }
-            editor.commit();
-        }
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        Intent audioServiceIntent = new Intent( this, PlayListService.class );
-        stopService(audioServiceIntent);
-    }
-
-    /*
-     ***************************** Bus listeners **************************************
-     */
-
-    @Subscribe
-    public void newTimeMessage( final NewTimeMessage message )
-    {
-        try
-        {
-            runOnUiThread(new Runnable()
-            {
-                @Override
-                public void run()
+                case R.id.menuLoadList:
                 {
-                    if ( PlayListManager.getInstance().get() != null )
+                    Intent intent = new Intent(this, FileChooserActivity.class);
+                    intent.putExtra("FileChooserActivity.fileFilter", M3UFileFilter.class.getName());
+                    intent.putExtra("FileChooserActivity.fileComparator", FileComparator.class.getName());
+                    intent.putExtra("FileChooserActivity.fileProccessor", M3UFileProccessor.class.getName());
+                    intent.putExtra("FileChooserActivity.multiSelect", false);
+                    if (!PreferenceManager.getDefaultSharedPreferences( this ).getString("prefDefaultM3UFolder","").equals( "" ))
                     {
-                        ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getNewTimeAsString(((Track) PlayListManager.getInstance().get()).getDurationMillis()));
-                        ((SeekBar) findViewById(R.id.seekbarTime)).setProgress(new Long(message.getNewTime()).intValue());
+                        intent.putExtra("FileChooserActivity.initialFolder", PreferenceManager.getDefaultSharedPreferences( this ).getString("prefDefaultM3UFolder",""));
                     }
+                    startActivity(intent);
+                    break;
                 }
-            });
-        }
-        catch ( Throwable t )
-        {
-            Utils.dumpException( getBaseContext(), t );
-            throw t;
-        }
-    }
-
-    @Subscribe
-    public void playListUpdatedMessage( PlayListUpdatedMessage message )
-    {
-        try
-        {
-            runOnUiThread(new Runnable()
-            {
-                @Override
-                public void run()
+                case R.id.menuSaveList:
                 {
-                    ((ListView) findViewById(R.id.playListView)).invalidateViews();
+                    if ( !PlayListManager.getInstance().isEmpty())
+                    {
+                        DialogFragment dialog = new SavePlayListDialog();
+                        dialog.show(getSupportFragmentManager(), "Save PlayList");
+                    }
+                    break;
                 }
-            });
+                case R.id.menuSortList:
+                {
+                    YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
+                    PlayListManager.getInstance().sort();
+                    seleccionado = PlayListManager.getInstance().getPointer();
+                    YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
+                    listView.invalidateViews();
+                    break;
+                }
+                case R.id.menuRandomizeList:
+                {
+                    YOPLPServiceController.getInstance( this ).playListInfoServiceKill();
+                    PlayListManager.getInstance().randomize();
+                    seleccionado = PlayListManager.getInstance().getPointer();
+                    YOPLPServiceController.getInstance( this ).playListInfoServiceStart();
+                    listView.invalidateViews();
+                    break;
+                }
+                case R.id.action_settings:
+                {
+                    Intent intent = new Intent(this, YOPLPSettingsActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+            }
+
+            return super.onOptionsItemSelected(item);
         }
         catch ( Throwable t )
         {
@@ -576,10 +610,6 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             throw t;
         }
     }
-
-    // -------------------------------------------------------------------------------------------
-    // Controls Listeners
-    // -------------------------------------------------------------------------------------------
 
     // --- SeekBar Listener ----------------------------------------
 
@@ -601,6 +631,4 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     public void onStopTrackingTouch(SeekBar seekBar)
     {
     }
-
-
 }

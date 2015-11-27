@@ -102,7 +102,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
      */
     public synchronized boolean previous()
     {
-        if ( !isEmpty() && pointer >= 0 )
+        if ( !isEmpty() && pointer > 0 )
         {
             pointer --;
             notifyPiositionChange();

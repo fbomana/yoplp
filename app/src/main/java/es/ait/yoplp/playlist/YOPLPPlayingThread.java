@@ -34,6 +34,7 @@ public class YOPLPPlayingThread implements Runnable
         {
             instance = new YOPLPPlayingThread( YOPLPAudioPlayer.getInstance( context ));
         }
+        instance.stop = false;
         return instance;
     }
 
@@ -41,9 +42,7 @@ public class YOPLPPlayingThread implements Runnable
     {
         Log.e("[YOPLP]", "En el constructor de YOPLPPlayingThread");
         this.player = player;
-        Log.e("[YOPLP]", "Bus: " + BusManager.getBus().toString());
         BusManager.getBus().register(this);
-        Log.e("[YOPLP]", new Date().getTime() + " Registrado en el bus");
     }
 
     public void stop()

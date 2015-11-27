@@ -2,6 +2,7 @@ package es.ait.yoplp.message;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
@@ -17,6 +18,7 @@ public class BusManager
     {
         if ( bus == null )
         {
+            Log.e("[YOPLP]", "creando un nuevo bus");
             bus = new Bus(ThreadEnforcer.ANY );
         }
         return bus;

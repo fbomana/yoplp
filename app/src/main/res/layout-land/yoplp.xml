@@ -28,56 +28,59 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
                 <ImageButton
                     android:id="@+id/previousButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
-                    android:paddingRight="10dp"
+                    android:paddingRight="5dp"
                     android:src="@android:drawable/ic_media_previous"/>
                 <ImageButton
                     android:id="@+id/playButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
                     android:src="@android:drawable/ic_media_play"/>
                 <ImageButton
                     android:id="@+id/pauseButtopn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
                     android:src="@android:drawable/ic_media_pause"/>
                 <ImageButton
                     android:id="@+id/nextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
                     android:src="@android:drawable/ic_media_next"/>
                 <ImageButton
                     android:id="@+id/stopButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
                     android:src="@drawable/ic_media_stop"/>
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/seekbarTime"
+                    android:background="@android:color/background_dark"
+                    android:paddingBottom="5px"/>
             </LinearLayout>
             <TextView
                 android:id="@+id/textSongName"
@@ -91,7 +94,7 @@
                 android:focusableInTouchMode="true"
                 android:textColor="@android:color/primary_text_dark"
                 android:text="Esto es un ejemplo de título de canción"
-                android:paddingLeft="10dp"
+                android:paddingLeft="5dp"
                 android:textSize="@dimen/abc_text_size_medium_material"
                 android:paddingTop="3dp"
                 android:paddingRight="3dp"

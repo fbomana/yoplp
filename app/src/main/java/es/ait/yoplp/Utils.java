@@ -1,5 +1,7 @@
 package es.ait.yoplp;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Log;
 
@@ -66,5 +68,18 @@ public class Utils
             return name.substring( name.lastIndexOf(".") + 1);
         }
         return null;
+    }
+
+    public static boolean isMyServiceRunning( Context context, String className )
+    {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);
+        for ( ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+        {
+            if (className.equals(service.service.getClassName()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
