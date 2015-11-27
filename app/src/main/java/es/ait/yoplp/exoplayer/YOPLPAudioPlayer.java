@@ -20,16 +20,12 @@ import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ait.yoplp.Utils;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.TrackEndedMessage;
 import es.ait.yoplp.playlist.Track;
-import es.ait.yoplp.settings.YOPLPSettingsActivity;
 
 /**
  * This class wrap and exoplayer instance and provides standard play, pause, stop, ... methods.
@@ -66,13 +62,13 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     // Actual class.
     //-----------------------------------------------------------
 
-    private ExoPlayer player;
+    private final ExoPlayer player;
 
-    private Handler mainHandler;
-    private DataSource dataSource;
-    private Allocator allocator;
-    private Context context;
-    private AtomicBoolean playing = new AtomicBoolean( false );
+    private final Handler mainHandler;
+    private final DataSource dataSource;
+    private final Allocator allocator;
+    private final Context context;
+    private final AtomicBoolean playing = new AtomicBoolean( false );
 
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
@@ -113,6 +109,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         // Work arround for more formats
         if ( "flac".equals(Utils.getExtension( track.getFile())) || "ogg".equals(Utils.getExtension( track.getFile())) )
         {
+            //noinspection deprecation
             sampleSource = new FrameworkSampleSource( context, uri, null);
         }
         if ( sampleSource == null )

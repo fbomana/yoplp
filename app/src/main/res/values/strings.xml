@@ -5,7 +5,7 @@
     <string name="menuAddFiles">Add Files</string>
     <string name="action_settings">Settings</string>
 
-    <string name="button_ok">Ok</string>
+    <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="menuClearList">Clear Playlist</string>
     <string name="menuRandomizeList">Randomize Playlist</string>
@@ -22,5 +22,10 @@
     <string name="pref_defaultM3UFolder">Default folder for playlists</string>
     <string name="pldFileName">Playlist name</string>
     <string name="menuLoadList">Load Play List</string>
+    <string name="defaultTextSongTimeLeft">00:00</string>
+    <string name="defaultTextSongName">Title</string>
+    <string name="defaultTextSongAlbum">Album</string>
+    <string name="defaultTextSongAuthor">Author</string>
+    <string name="defaultFcUrlText">Toplevel folders</string>
 
 </resources>

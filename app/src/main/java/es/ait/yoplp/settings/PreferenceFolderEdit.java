@@ -6,20 +6,16 @@ import android.content.Intent;
 import android.preference.EditTextPreference;
 import android.util.AttributeSet;
 
-import java.io.File;
-import java.util.List;
-
 import es.ait.yoplp.fileChooser.FileChooserActivity;
 import es.ait.yoplp.fileChooser.FileComparator;
-import es.ait.yoplp.fileChooser.FileProccessor;
 
 /**
  * Created by aitkiar on 6/11/15.
  */
 public class PreferenceFolderEdit extends EditTextPreference
 {
-    public Activity activity;
-    protected static PreferenceFolderEdit instance;
+    private Activity activity;
+    static PreferenceFolderEdit instance;
     private String defaultValue;
 
     public PreferenceFolderEdit(Context context, AttributeSet attrs)

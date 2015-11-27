@@ -27,7 +27,7 @@ import es.ait.yoplp.Utils;
 public class FileChooserActivity extends AppCompatActivity implements View.OnClickListener
 {
 
-    private Stack<File> folderStack = new Stack<File>();
+    private final Stack<File> folderStack = new Stack<>();
     private FileChooserActivityConfiguration configuration;
 
     @Override
@@ -53,7 +53,7 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                     if ( configuration.getInitialFolder() != null )
                     {
                         File parent = configuration.getInitialFolder();
-                        List<File> files = new ArrayList<File>();
+                        List<File> files = new ArrayList<>();
                         while ( parent != null )
                         {
                             files.add( parent );

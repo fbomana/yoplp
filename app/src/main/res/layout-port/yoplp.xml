@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
@@ -14,7 +15,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0"
             android:textColor="@android:color/primary_text_dark"
-            android:text="10:04"
+            android:text="@string/defaultTextSongTimeLeft"
             android:gravity="center_vertical|center_horizontal"
             android:textStyle="bold"
             android:textSize="@dimen/abc_text_size_large_material"
@@ -38,7 +39,8 @@
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
                     android:paddingRight="10dp"
-                    android:src="@android:drawable/ic_media_previous"/>
+                    android:src="@android:drawable/ic_media_previous"
+                    tools:ignore="RtlSymmetry"/>
                 <ImageButton
                     android:id="@+id/playButton"
                     android:layout_width="wrap_content"
@@ -91,7 +93,7 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:textColor="@android:color/primary_text_dark"
-                android:text="Esto es un ejemplo de título de canción"
+                android:text="@string/defaultTextSongName"
                 android:paddingLeft="10dp"
                 android:textSize="@dimen/abc_text_size_medium_material"
                 android:paddingTop="3dp"
@@ -104,7 +106,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/seekbarTime"
         android:background="@android:color/background_dark"
-        android:paddingBottom="5px"/>
+        style="@android:style/Widget.DeviceDefault.Light.SeekBar"
+        android:paddingBottom="2dp"/>
     <ListView
         android:id="@+id/playListView"
         android:layout_width="match_parent"

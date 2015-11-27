@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:baselineAligned="false">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -73,7 +75,7 @@
             android:ellipsize="none"
             android:padding="3dp"
             android:layout_weight="0"
-            android:text="10:04"
+            android:text="@string/defaultTextSongTimeLeft"
             android:textSize="60sp"
             android:textColor="@android:color/primary_text_dark"/>
         <SeekBar
@@ -90,7 +92,7 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:text="Esto es un ejemplo de título de canción demasiado largo"
+            android:text="@string/defaultTextSongName"
             android:textColor="@android:color/primary_text_dark"
             android:textSize="@dimen/abc_text_size_headline_material"/>
         <LinearLayout
@@ -114,9 +116,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:text="Album"
+            android:text="@string/defaultTextSongAlbum"
             android:textColor="@android:color/primary_text_dark"
-            android:textSize="@dimen/abc_text_size_headline_material"/>
+            android:textSize="@dimen/abc_text_size_headline_material"
+            tools:ignore="InconsistentLayout"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="3dp"
-            android:text="Author"
+            android:text="@string/defaultTextSongAuthor"
             android:textColor="@android:color/primary_text_dark"
             android:textSize="@dimen/abc_text_size_headline_material"/>
         <LinearLayout

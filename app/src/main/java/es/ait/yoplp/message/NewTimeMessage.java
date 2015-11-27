@@ -8,7 +8,7 @@ import es.ait.yoplp.Utils;
 public class NewTimeMessage
 {
 
-    private long newTime;
+    private final long newTime;
 
     public NewTimeMessage( long newTime )
     {

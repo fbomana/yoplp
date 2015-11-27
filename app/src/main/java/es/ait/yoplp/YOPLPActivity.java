@@ -1,8 +1,8 @@
 package es.ait.yoplp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -21,7 +21,6 @@ import android.widget.ToggleButton;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -68,6 +67,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     // Activity Lifecicle methods
     // -------------------------------------------------------------------------------------------
 
+    @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -121,7 +121,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             seekBar.setOnSeekBarChangeListener(this);
             if ( YOPLPAudioPlayer.getInstance().isPlaying() )
             {
-                seekBar.setMax( new Long ( YOPLPAudioPlayer.getInstance().getDuration()).intValue());
+                seekBar.setMax( Long.valueOf ( YOPLPAudioPlayer.getInstance().getDuration()).intValue());
             }
 
             iniciarReproduccion = new AtomicBoolean( false );
@@ -169,6 +169,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     /**
      * Repintamos la playlist cada vez que tenemos un evento onResume.
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void onResume()
     {
@@ -180,8 +181,6 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             this.seleccionado = PlayListManager.getInstance().getPointer();
 
             listView.setAdapter(new PlayListAdapter(this, R.id.playListView, PlayListManager.getInstance()));
-
-            TextView textView = ( TextView ) findViewById( R.id.textSongTimeLeft );
 
             if ( !PlayListManager.getInstance().isEmpty() )
             {
@@ -218,6 +217,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
      * In this method we cleanup whatever it's still running, and save the state in order to restore it in
      * the onResume call.
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void onPause()
     {
@@ -247,6 +247,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
     @Override
     public void onStop()
     {
@@ -294,6 +295,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         {
             runOnUiThread(new Runnable()
             {
+                @SuppressWarnings("unchecked")
                 @Override
                 public void run()
                 {
@@ -303,7 +305,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     {
                         SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
                         ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getNewTimeAsString(track.getDurationMillis()));
-                        seekBar.setProgress(new Long(message.getNewTime()).intValue());
+                        seekBar.setProgress(Long.valueOf(message.getNewTime()).intValue());
 
                     }
                 }
@@ -316,6 +318,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     @Subscribe
     public void playListUpdatedMessage( PlayListUpdatedMessage message )
     {
@@ -337,6 +340,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void playListPositionChanged(int pointer)
     {
@@ -369,7 +373,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             ((TextView) findViewById(R.id.textSongTimeLeft)).setText(track.getDuration());
 
             SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
-            seekBar.setMax( new Long( track.getDurationMillis()).intValue());
+            seekBar.setMax( track.getDurationMillis().intValue());
             seekBar.setProgress( 0 );
 
             if (textSongAlbum != null)

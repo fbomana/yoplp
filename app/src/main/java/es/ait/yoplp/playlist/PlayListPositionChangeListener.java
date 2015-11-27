@@ -5,5 +5,5 @@ package es.ait.yoplp.playlist;
  */
 public interface PlayListPositionChangeListener
 {
-    public void playListPositionChanged( int newPosition );
+    void playListPositionChanged( int newPosition );
 }

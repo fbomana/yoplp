@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -22,6 +23,7 @@ import es.ait.yoplp.m3u.M3UWriter;
  */
 public class SavePlayListDialog extends DialogFragment
 {
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
@@ -29,6 +31,7 @@ public class SavePlayListDialog extends DialogFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder = builder.setView(getActivity().getLayoutInflater().inflate(R.layout.save_playlist_dialog, null));
         builder = builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+            @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try
@@ -52,12 +55,12 @@ public class SavePlayListDialog extends DialogFragment
                 }
                 catch ( IOException e )
                 {
-                    Utils.dumpException(SavePlayListDialog.this.getActivity(), e);;
+                    Utils.dumpException(SavePlayListDialog.this.getActivity(), e);
                     Log.e("[YOPLP", "Error al escribir la playlist", e);
                 }
                 catch ( Throwable  e )
                 {
-                    Utils.dumpException( SavePlayListDialog.this.getActivity(), e );;
+                    Utils.dumpException( SavePlayListDialog.this.getActivity(), e );
                     Log.e("[YOPLP", "Error al escribir la playlist", e);
                     throw e;
                 }

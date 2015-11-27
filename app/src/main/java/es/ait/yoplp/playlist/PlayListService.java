@@ -6,8 +6,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
-
 /**
  * Created by aitkiar on 20/11/15.
  */

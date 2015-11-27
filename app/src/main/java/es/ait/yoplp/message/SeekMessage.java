@@ -5,7 +5,7 @@ package es.ait.yoplp.message;
  */
 public class SeekMessage
 {
-    private long position;
+    private final long position;
 
     public SeekMessage( long position )
     {

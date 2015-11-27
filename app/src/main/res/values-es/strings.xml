@@ -23,4 +23,9 @@
     <string name="pref_defaultM3UFolder">Directorio por defecto para listas de reproducción.</string>
     <string name="pldFileName">Nombre de la lista de reproducción</string>
     <string name="menuLoadList">Cargar lista de reproducción</string>
+    <string name="defaultTextSongTimeLeft">00:00</string>
+    <string name="defaultTextSongName">Título</string>
+    <string name="defaultTextSongAlbum">Álbum</string>
+    <string name="defaultTextSongAuthor">Autor</string>
+    <string name="defaultFcUrlText">Carpetas raíz</string>
 </resources>

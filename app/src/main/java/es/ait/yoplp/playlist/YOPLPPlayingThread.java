@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.squareup.otto.Subscribe;
 
-import java.util.Date;
-
 import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.NewTimeMessage;
@@ -25,7 +23,7 @@ public class YOPLPPlayingThread implements Runnable
 {
     private static YOPLPPlayingThread instance;
 
-    private YOPLPAudioPlayer player;
+    private final YOPLPAudioPlayer player;
     private boolean stop = false;
 
     public static YOPLPPlayingThread getInstance( Context context )
@@ -61,7 +59,7 @@ public class YOPLPPlayingThread implements Runnable
             }
             try
             {
-                Thread.currentThread().sleep(900);
+                Thread.sleep(900);
             }
             catch ( Exception e )
             {
@@ -77,6 +75,7 @@ public class YOPLPPlayingThread implements Runnable
      *  
      * @param message
      */
+    @SuppressWarnings("unchecked")
     @Subscribe
     public void playMessage( PlayMessage message )
     {
@@ -98,6 +97,7 @@ public class YOPLPPlayingThread implements Runnable
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     @Subscribe
     public void stopMessge( StopMessage message )
     {
@@ -107,6 +107,7 @@ public class YOPLPPlayingThread implements Runnable
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     @Subscribe
     public void pauseMessage( PauseMessage message )
     {
@@ -116,8 +117,9 @@ public class YOPLPPlayingThread implements Runnable
         }
     }
 
+    @SuppressWarnings({"unchecked", "UnusedParameters"})
     @Subscribe
-    public void nextMessage( NextMessage message )
+    private void nextMessage(NextMessage message)
     {
         PlayListManager<Track> plm = PlayListManager.getInstance();
 
@@ -132,6 +134,7 @@ public class YOPLPPlayingThread implements Runnable
         }
     }
 
+    @SuppressWarnings({"unchecked", "UnusedParameters"})
     @Subscribe
     public void previousMessage( PreviousMessage message )
     {
@@ -160,6 +163,7 @@ public class YOPLPPlayingThread implements Runnable
      *
      * @param message
      */
+    @SuppressWarnings("UnusedParameters")
     @Subscribe
     public void trackEndedMessage( TrackEndedMessage message )
     {

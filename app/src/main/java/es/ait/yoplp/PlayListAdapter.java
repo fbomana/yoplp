@@ -16,13 +16,15 @@ import es.ait.yoplp.playlist.Track;
 /**
  * Adapter for the ListView of the play list
  */
-public class PlayListAdapter extends ArrayAdapter<File>
+class PlayListAdapter extends ArrayAdapter<File>
 {
+    @SuppressWarnings("SameParameterValue")
     public PlayListAdapter(Context context, int resource, List<File> objects)
     {
         super(context, resource, objects);
     }
 
+    @SuppressWarnings("unchecked")
     public View getView(int position, View convertView, ViewGroup parent)
     {
         PlayListManager<Track> plm =  PlayListManager.getInstance();

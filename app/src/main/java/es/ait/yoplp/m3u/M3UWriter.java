@@ -5,18 +5,19 @@
  */
 package es.ait.yoplp.m3u;
 
-import es.ait.yoplp.playlist.PlayList;
-import es.ait.yoplp.playlist.Track;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import es.ait.yoplp.playlist.PlayList;
+import es.ait.yoplp.playlist.Track;
 
 /**
  * This class manage writing playlists as m3u files to disk. The tracks are saved as an absolute path.
  */
 public class M3UWriter
 {
-    private File m3uFile;
+    private final File m3uFile;
 
     private M3UWriter( File m3uFile )
     {
@@ -32,6 +33,7 @@ public class M3UWriter
      * @return
      * @throws IOException
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static M3UWriter getInstance( File m3uFile ) throws IOException
     {
         if ( m3uFile == null || ( m3uFile.exists() && !m3uFile.canWrite()))
@@ -44,7 +46,7 @@ public class M3UWriter
             throw new IOException("Supplied argument it's not an m3u file");
         }
 
-        if ( !m3uFile.isAbsolute() && m3uFile.getAbsolutePath() == null )
+        if ( !m3uFile.isAbsolute())
         {
             throw new IOException ("Supplied argument must have an absolute path.");
         }

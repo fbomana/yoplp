@@ -11,9 +11,9 @@ import java.util.Comparator;
  * This class helds the configuration of the FileChooserActivity. The configuration it's set automátically
  * from the parameters passed to the FileChooserActivity
  */
-public class FileChooserActivityConfiguration
+class FileChooserActivityConfiguration
 {
-    private boolean createFolder;
+    private final boolean createFolder;
     private Comparator<File> fileComparator;
     private FileFilter fileFilter;
     private File initialFolder;
@@ -21,6 +21,7 @@ public class FileChooserActivityConfiguration
     private FileProccessor proccessor;
 
 
+    @SuppressWarnings("unchecked")
     public FileChooserActivityConfiguration ( Intent intent ) throws ClassNotFoundException, IllegalAccessException, InstantiationException
     {
         createFolder = intent.getBooleanExtra( "FileChooserActivity.createFolder", false);

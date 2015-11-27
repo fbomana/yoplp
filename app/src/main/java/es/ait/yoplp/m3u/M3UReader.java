@@ -14,7 +14,7 @@ import es.ait.yoplp.playlist.Track;
  */
 public class M3UReader
 {
-    private File m3uFile;
+    private final File m3uFile;
 
     private M3UReader( File m3uFile )
     {
@@ -40,7 +40,7 @@ public class M3UReader
             throw new IOException("Supplied argument it's not an m3u file");
         }
 
-        if ( !m3uFile.isAbsolute() && m3uFile.getAbsolutePath() == null )
+        if ( !m3uFile.isAbsolute() )
         {
             throw new IOException ("Supplied argument must have an absolute path.");
         }
@@ -56,7 +56,7 @@ public class M3UReader
     public PlayList<Track> parse()
     {
         BufferedReader buff = null;
-        PlayList<Track> result = new PlayList<Track>();
+        PlayList<Track> result = new PlayList<>();
         try
         {
             buff = new BufferedReader( new FileReader( m3uFile ));
@@ -65,10 +65,7 @@ public class M3UReader
             String extinf = null;
             while ( ((line = buff.readLine())) != null )
             {
-                if ( line.trim().startsWith("#EXTM3U") )
-                {
-                }
-                else if ( line.trim().startsWith("#EXTINF"))
+                if ( line.trim().startsWith("#EXTINF"))
                 {
                     extinf = line.trim();
                 }

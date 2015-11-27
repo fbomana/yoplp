@@ -8,5 +8,5 @@ import java.util.List;
  */
 public interface FileProccessor
 {
-    public void process( List<File> selectedFiles );
+    void process( List<File> selectedFiles );
 }

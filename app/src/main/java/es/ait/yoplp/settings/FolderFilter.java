@@ -6,7 +6,7 @@ import java.io.FileFilter;
 /**
  * Created by aitkiar on 6/11/15.
  */
-public class FolderFilter implements FileFilter
+class FolderFilter implements FileFilter
 {
     @Override
     public boolean accept(File pathname)

@@ -35,6 +35,7 @@ public class MusicFileProccessor implements FileProccessor
      *
      * @param file
      */
+    @SuppressWarnings("unchecked")
     private void loadFiles( File file )
     {
         if ( file.canRead())
@@ -43,21 +44,19 @@ public class MusicFileProccessor implements FileProccessor
             {
                 File files[] = file.listFiles( new MusicFileFilter());
                 Arrays.sort(files, new FileComparator());
-                for ( int i = 0; i < files.length; i ++ )
+                for (File file1 : files)
                 {
-                    if ( files[i].isDirectory())
+                    if (file1.isDirectory())
                     {
-                        loadFiles( files[i] );
-                    }
-                    else // Avoid extra recursive calls that generate overhead
+                        loadFiles(file1);
+                    } else // Avoid extra recursive calls that generate overhead
                     {
-                        if ( "m3u".equals( files[i].getName().substring( files[i].getName().lastIndexOf(".") + 1 )))
+                        if ("m3u".equals(file1.getName().substring(file1.getName().lastIndexOf(".") + 1)))
                         {
                             // Avoid reading m3u files in a directory
-                        }
-                        else
+                        } else
                         {
-                            PlayListManager.getInstance().add(new Track(files[i]));
+                            PlayListManager.getInstance().add(new Track(file1));
                         }
                     }
                 }

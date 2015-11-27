@@ -17,19 +17,12 @@ import es.ait.yoplp.message.PlayListUpdatedMessage;
  */
 public class PlayListInfoService extends IntentService
 {
-    public static final String PLAYLISTINFOUPDATED = "es.ait.yoplp.PLAYLISTINFOUPDATED";
-
     public PlayListInfoService()
     {
         super("PlayListInfoService");
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     protected void onHandleIntent(Intent intent)
     {
@@ -74,7 +67,7 @@ public class PlayListInfoService extends IntentService
             {
                 track.setTitle(track.getFile().getName());
             }
-            long duration = 0;
+            long duration;
             try
             {
                 duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));

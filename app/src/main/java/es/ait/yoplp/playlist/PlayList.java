@@ -26,7 +26,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
      * @param i
      * @param j
      */
-    public void swap( int i, int j )
+    private void swap(int i, int j)
     {
         E item1 = get( i );
         E item2 = get( j );
@@ -174,7 +174,7 @@ public class PlayList<E extends Comparable<E>> extends ArrayList<E>
     {
         if ( positionListeners == null )
         {
-            positionListeners = new ArrayList<PlayListPositionChangeListener>();
+            positionListeners = new ArrayList<>();
         }
         positionListeners.add( listener );
     }

@@ -29,9 +29,10 @@ public class YOPLPSettingsActivity extends PreferenceActivity
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate(savedInstanceState);
+        //noinspection deprecation
         addPreferencesFromResource(R.xml.preferences);
 
-        PreferenceFolderEdit text = ( PreferenceFolderEdit ) findPreference("prefDefaultM3UFolder");
+        @SuppressWarnings("deprecation") PreferenceFolderEdit text = ( PreferenceFolderEdit ) findPreference("prefDefaultM3UFolder");
         text.setActivity(this);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if ( !sharedPref.getString("prefDefaultM3UFolder", "").equals( "" ))

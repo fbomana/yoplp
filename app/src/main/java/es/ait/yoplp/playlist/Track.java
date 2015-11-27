@@ -1,5 +1,7 @@
 package es.ait.yoplp.playlist;
 
+import android.support.annotation.NonNull;
+
 import java.io.File;
 
 /**
@@ -71,6 +73,7 @@ public class Track implements Comparable<Track>
         return selected;
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void setSelected(boolean selected)
     {
         this.selected = selected;
@@ -93,13 +96,9 @@ public class Track implements Comparable<Track>
 
 
     @Override
-    public int compareTo(Track another)
+    public int compareTo(@NonNull Track another)
     {
-        if ( another == null )
-        {
-            return 1;
-        }
-        return file.getAbsolutePath().compareTo( ((Track) another).getFile().getAbsolutePath() );
+        return file.getAbsolutePath().toUpperCase().compareTo( another.getFile().getAbsolutePath().toUpperCase() );
     }
 
     public Long getDurationMillis()

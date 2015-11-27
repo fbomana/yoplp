@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import es.ait.yoplp.R;
@@ -20,14 +21,15 @@ import es.ait.yoplp.R;
  * Adapter that permits to pass the contents of a directory to a ListView. It sorts the elements of
  * the list putting folder first than files and sorting them in lexicographical order.
  */
-public class FolderAdapter extends ArrayAdapter
+class FolderAdapter extends ArrayAdapter
 {
 
-    private FileChooserActivityConfiguration configuration;
+    private final FileChooserActivityConfiguration configuration;
     private View oldView;
 
     private List<File> selectedList;
 
+    @SuppressWarnings({"unchecked", "SameParameterValue"})
     public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource )
     {
         super( context, resource, folderToList( configuration.getInitialFolder(), configuration ));
@@ -36,7 +38,8 @@ public class FolderAdapter extends ArrayAdapter
         sort( configuration.getFileComparator() );
     }
 
-    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, File folder ) throws Exception
+    @SuppressWarnings({"unchecked", "SameParameterValue"})
+    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, File folder )
     {
         super( context, resource, folderToList( folder, configuration ));
 
@@ -44,7 +47,8 @@ public class FolderAdapter extends ArrayAdapter
         sort( configuration.getFileComparator() );
     }
 
-    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, String folder) throws Exception
+    @SuppressWarnings("unchecked")
+    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, String folder)
     {
         super( context, resource,folderToList( new File( folder ), configuration));
 
@@ -52,7 +56,8 @@ public class FolderAdapter extends ArrayAdapter
         sort( configuration.getFileComparator() );
     }
 
-    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, List<File> files ) throws Exception
+    @SuppressWarnings("unchecked")
+    public FolderAdapter( FileChooserActivityConfiguration configuration, Context context, int resource, List<File> files )
     {
         super( context, resource, files );
 
@@ -69,15 +74,12 @@ public class FolderAdapter extends ArrayAdapter
      */
     private static List<File> folderToList( File folder, FileChooserActivityConfiguration configuration )
     {
-        List<File> result = new ArrayList<File>();
+        List<File> result = new ArrayList<>();
         if ( folder != null )
         {
             File[] files = folder.listFiles( configuration.getFileFilter());
 
-            for (int i = 0; i < files.length; i++)
-            {
-                result.add(files[i]);
-            }
+            Collections.addAll(result, files);
         }
         else
         {
@@ -90,11 +92,11 @@ public class FolderAdapter extends ArrayAdapter
                     aux = new File("/mnt").listFiles();
                 }
 
-                for (int i = 0; i < aux.length; i++)
+                for (File anAux : aux)
                 {
-                    if (aux[i].getName().startsWith("sdcard"))
+                    if (anAux.getName().startsWith("sdcard"))
                     {
-                        result.add(aux[i]);
+                        result.add(anAux);
                     }
                 }
             }
@@ -104,6 +106,7 @@ public class FolderAdapter extends ArrayAdapter
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public void navigateTo( File folder )
     {
         if ( folder.isDirectory() && folder.canRead())
@@ -210,11 +213,11 @@ public class FolderAdapter extends ArrayAdapter
         }
     }
 
-    protected List<File>getSelectedList()
+    List<File>getSelectedList()
     {
         if ( selectedList == null )
         {
-            selectedList = new ArrayList<File>();
+            selectedList = new ArrayList<>();
         }
         return selectedList;
     }

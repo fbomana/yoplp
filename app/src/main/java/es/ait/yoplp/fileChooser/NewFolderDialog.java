@@ -3,11 +3,11 @@ package es.ait.yoplp.fileChooser;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import es.ait.yoplp.R;
 import es.ait.yoplp.Utils;
@@ -19,6 +19,7 @@ import es.ait.yoplp.Utils;
 public class NewFolderDialog extends DialogFragment
 {
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
@@ -38,7 +39,7 @@ public class NewFolderDialog extends DialogFragment
                 }
                 catch ( Throwable  e )
                 {
-                    Utils.dumpException( NewFolderDialog.this.getActivity(), e );;
+                    Utils.dumpException( NewFolderDialog.this.getActivity(), e );
                     Log.e("[YOPLP", "Error al crear un directorio", e);
                     throw e;
                 }

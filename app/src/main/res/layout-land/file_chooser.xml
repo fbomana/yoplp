@@ -11,7 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="/aaaaaa/aaaa/aaaa"
+            android:text="@string/defaultFcUrlText"
             android:textSize="@dimen/abc_text_size_large_material"
             android:singleLine="true"
             android:ellipsize="start"
@@ -31,7 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/fcFileList"
-        android:layout_weight="0"
         android:layout_below="@id/topLineContainer"
         android:layout_above="@id/buttonContainer"/>
     <LinearLayout
@@ -40,17 +39,20 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:id="@+id/buttonContainer"
-        android:layout_centerHorizontal="true">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fcOkButton"
-            android:text="@string/button_ok"/>
+        android:layout_centerHorizontal="true"
+        style="?android:attr/buttonBarStyle">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/fcCancelButton"
-            android:text="@string/button_cancel"/>
+            android:text="@string/button_cancel"
+            style="?android:attr/buttonBarButtonStyle"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fcOkButton"
+            android:text="@string/button_ok"
+            style="?android:attr/buttonBarButtonStyle"/>
     </LinearLayout>
 
 

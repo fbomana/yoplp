@@ -1,7 +1,5 @@
 package es.ait.yoplp.message;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.squareup.otto.Bus;

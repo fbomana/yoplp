@@ -8,7 +8,7 @@ import com.squareup.otto.Bus;
 /**
  * Created by aitkiar on 2/10/15.
  */
-public class MainThreadBus extends Bus
+class MainThreadBus extends Bus
 {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
