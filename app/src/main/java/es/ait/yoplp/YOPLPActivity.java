@@ -140,6 +140,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
                             int defaultValue = sharedPref.getInt("Selected track", 0);
                             PlayListManager.getInstance().setPointer(defaultValue);
+
+                            seekBar.setMax( ((Track)PlayListManager.getInstance().get()).getDurationMillis().intValue());
                             iniciarReproduccion.set(true);
                         }
                     }

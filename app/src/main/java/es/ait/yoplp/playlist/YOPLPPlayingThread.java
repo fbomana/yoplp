@@ -119,7 +119,7 @@ public class YOPLPPlayingThread implements Runnable
 
     @SuppressWarnings({"unchecked", "UnusedParameters"})
     @Subscribe
-    private void nextMessage(NextMessage message)
+    public void nextMessage(NextMessage message)
     {
         PlayListManager<Track> plm = PlayListManager.getInstance();
 
