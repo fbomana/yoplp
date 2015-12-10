@@ -106,7 +106,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/seekbarTime"
         android:background="@android:color/background_dark"
-        style="@android:style/Widget.DeviceDefault.Light.SeekBar"
         android:paddingBottom="2dp"/>
     <ListView
         android:id="@+id/playListView"
