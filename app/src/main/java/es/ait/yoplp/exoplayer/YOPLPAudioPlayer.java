@@ -9,6 +9,7 @@ import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.FrameworkSampleSource;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
+import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecTrackRenderer;
 import com.google.android.exoplayer.SampleSource;
 import com.google.android.exoplayer.audio.AudioCapabilities;
@@ -116,8 +117,9 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         {
             sampleSource = new ExtractorSampleSource(uri, dataSource, allocator, BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
         }
-        MediaCodecAudioTrackRenderer audioTrackRenderer = new MediaCodecAudioTrackRenderer( sampleSource,
-                null, true, mainHandler, this, AudioCapabilities.getCapabilities( context ));
+
+        MediaCodecAudioTrackRenderer audioTrackRenderer = new MediaCodecAudioTrackRenderer( sampleSource, MediaCodecSelector.DEFAULT,
+            null, true, mainHandler, this );
 
         player.addListener(this);
         player.prepare(audioTrackRenderer);
@@ -200,6 +202,12 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
 
     @Override
     public void onAudioTrackWriteError(AudioTrack.WriteException e)
+    {
+
+    }
+
+    @Override
+    public void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs)
     {
 
     }
