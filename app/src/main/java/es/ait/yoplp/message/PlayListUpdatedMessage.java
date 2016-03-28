@@ -1,7 +1,7 @@
 package es.ait.yoplp.message;
 
 /**
- * Created by aitkiar on 2/10/15.
+ * Mensaje que se envía cuando ha habido un cambio en la documentación.
  */
 public class PlayListUpdatedMessage
 {

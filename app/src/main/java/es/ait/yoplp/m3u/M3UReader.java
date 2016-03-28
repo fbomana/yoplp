@@ -108,11 +108,12 @@ public class M3UReader
         {
             if ( buff != null )
             {
+                //noinspection EmptyCatchBlock
                 try
                 {
                     buff.close();
                 }
-                catch ( IOException e )
+                catch ( IOException ignored)
                 {
                 }
             }

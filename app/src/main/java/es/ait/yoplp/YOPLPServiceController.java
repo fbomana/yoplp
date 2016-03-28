@@ -5,9 +5,9 @@ import android.content.Intent;
 import es.ait.yoplp.playlist.PlayListInfoService;
 
 /**
- * Created by aitkiar on 29/09/15.
+ * Clase para parar y arrancar servicios.
  */
-public class YOPLPServiceController
+class YOPLPServiceController
 {
     private static YOPLPServiceController instance;
     private final YOPLPActivity activity;

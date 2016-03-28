@@ -3,7 +3,8 @@ package es.ait.yoplp.message;
 import es.ait.yoplp.Utils;
 
 /**
- * Created by aitkiar on 2/10/15.
+ * Mensaje que se envía a traves del bus cuando un servicio quiere informar a la actividad principal
+ * de que ha cambiado el punto de reproducción.
  */
 public class NewTimeMessage
 {

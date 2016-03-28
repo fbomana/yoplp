@@ -6,7 +6,7 @@ import java.util.List;
 import es.ait.yoplp.fileChooser.FileProccessor;
 
 /**
- * Created by aitkiar on 6/11/15.
+ * Clase que procesa el resultado de llamar a la actividad de selección de ficheros para un campo de preferencias.
  */
 public class PreferencesFolderProccessor implements FileProccessor
 {

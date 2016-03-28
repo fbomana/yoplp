@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * Created by aitkiar on 6/11/15.
+ * Filtro que implementa el interfaz FileFilter para seleccionar solo ficheros que sean directorios.
  */
 class FolderFilter implements FileFilter
 {

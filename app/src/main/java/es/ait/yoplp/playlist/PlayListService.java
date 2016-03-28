@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 /**
- * Created by aitkiar on 20/11/15.
+ * Servicio que inicia el hilo de reproducción de ficheros.
  */
 public class PlayListService extends Service
 {

@@ -1,7 +1,7 @@
 package es.ait.yoplp.message;
 
 /**
- * Created by aitkiar on 20/11/15.
+ * Mensaje que se envía para pasar a la pista anterior a la actual.
  */
 public class PreviousMessage
 {

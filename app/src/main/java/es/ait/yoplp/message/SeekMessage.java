@@ -1,7 +1,7 @@
 package es.ait.yoplp.message;
 
 /**
- * Created by aitkiar on 25/11/15.
+ * Mensaje que se envía cuando se mueve el punto de reproducción dentro de la pista que se está reproducciendo actualmente.
  */
 public class SeekMessage
 {

@@ -1,7 +1,7 @@
 package es.ait.yoplp.message;
 
 /**
- * Created by aitkiar on 20/11/15.
+ * Mensaje que se envía cuando se quiere iniciar la reproducción de una pista en un punto concreto.
  */
 public class PlayMessage
 {

@@ -21,7 +21,7 @@ public class MusicFileProccessor implements FileProccessor
      * If selected file is a folder, it adds all music files found in that folder in a recursive fashion
      */
     @Override
-    public void process(List<File> selectedFiles)
+    public void process(List<File> selectedFiles) throws IOException
     {
         for ( int i = 0; selectedFiles != null && i < selectedFiles.size(); i ++ )
         {
@@ -36,7 +36,7 @@ public class MusicFileProccessor implements FileProccessor
      * @param file
      */
     @SuppressWarnings("unchecked")
-    private void loadFiles( File file )
+    private void loadFiles( File file ) throws IOException
     {
         if ( file.canRead())
         {
@@ -51,10 +51,7 @@ public class MusicFileProccessor implements FileProccessor
                         loadFiles(file1);
                     } else // Avoid extra recursive calls that generate overhead
                     {
-                        if ("m3u".equals(file1.getName().substring(file1.getName().lastIndexOf(".") + 1)))
-                        {
-                            // Avoid reading m3u files in a directory
-                        } else
+                        if (!"m3u".equals(file1.getName().substring(file1.getName().lastIndexOf(".") + 1)))
                         {
                             PlayListManager.getInstance().add(new Track(file1));
                         }
@@ -65,13 +62,7 @@ public class MusicFileProccessor implements FileProccessor
             {
                 if ( "m3u".equals( file.getName().substring( file.getName().lastIndexOf(".") + 1 )))
                 {
-                    try
-                    {
                         PlayListManager.getInstance().addAll(M3UReader.getInstance(file).parse());
-                    }
-                    catch ( IOException e )
-                    {
-                    }
                 }
                 else
                 {

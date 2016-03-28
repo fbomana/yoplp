@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * Created by aitkiar on 7/11/15.
+ * Clase que implementa el interfaz FileFilter para ficheros m3u
  */
 public class M3UFileFilter implements FileFilter
 {

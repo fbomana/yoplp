@@ -53,6 +53,7 @@ public class PlayListInfoService extends IntentService
 
     private static void loadTrackMetadata( Track track, MediaMetadataRetriever retriever )
     {
+        long duration;
         if (track.getDuration() == null || track.getAuthor() == null )
         {
             retriever.setDataSource(track.getFile().getAbsolutePath());
@@ -67,17 +68,16 @@ public class PlayListInfoService extends IntentService
             {
                 track.setTitle(track.getFile().getName());
             }
-            long duration;
             try
             {
                 duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-                track.setDurationMillis(duration);
-                track.setDuration(Utils.milisToText(duration));
 
             } catch (Exception e)
             {
-
+                duration = 0;
             }
+            track.setDurationMillis(duration);
+            track.setDuration(Utils.milisToText(duration));
         }
         if (track.getDurationMillis() == 0)
         {
@@ -86,17 +86,20 @@ public class PlayListInfoService extends IntentService
                 MediaPlayer mp = new MediaPlayer();
                 mp.setDataSource(track.getFile().getAbsolutePath());
                 mp.prepare();
-                long durationMilis = mp.getDuration();
-                if (durationMilis > -1)
-                {
-                    track.setDurationMillis(durationMilis);
-                    track.setDuration(Utils.milisToText(durationMilis));
-                }
+                duration = mp.getDuration();
 
                 mp.release();
-            } catch (IOException e)
-            {
             }
+            catch (IOException e)
+            {
+                duration = 0;
+            }
+            if (duration > -1)
+            {
+                track.setDurationMillis(duration);
+                track.setDuration(Utils.milisToText(duration));
+            }
+
         }
     }
 }

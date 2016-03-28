@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.squareup.otto.Subscribe;
 
+import es.ait.yoplp.Utils;
 import es.ait.yoplp.exoplayer.YOPLPAudioPlayer;
 import es.ait.yoplp.message.BusManager;
 import es.ait.yoplp.message.NewTimeMessage;
@@ -17,7 +18,8 @@ import es.ait.yoplp.message.StopMessage;
 import es.ait.yoplp.message.TrackEndedMessage;
 
 /**
- * Created by aitkiar on 20/11/15.
+ * Clase que implementa runnable y que se usa para gestionar en un hilo separado el servicio de reproducción
+ * de audio de la aplicación.
  */
 public class YOPLPPlayingThread implements Runnable
 {
@@ -25,6 +27,7 @@ public class YOPLPPlayingThread implements Runnable
 
     private final YOPLPAudioPlayer player;
     private boolean stop = false;
+    private Context context;
 
     public static YOPLPPlayingThread getInstance( Context context )
     {
@@ -32,6 +35,7 @@ public class YOPLPPlayingThread implements Runnable
         {
             instance = new YOPLPPlayingThread( YOPLPAudioPlayer.getInstance( context ));
         }
+        instance.context = context;
         instance.stop = false;
         return instance;
     }
@@ -63,6 +67,8 @@ public class YOPLPPlayingThread implements Runnable
             }
             catch ( Exception e )
             {
+                Utils.dumpException( context, e );
+                stop = true;
             }
         }
     }
@@ -119,7 +125,7 @@ public class YOPLPPlayingThread implements Runnable
 
     @SuppressWarnings({"unchecked", "UnusedParameters"})
     @Subscribe
-    public void nextMessage(NextMessage message)
+    private void nextMessage(NextMessage message)
     {
         PlayListManager<Track> plm = PlayListManager.getInstance();
 

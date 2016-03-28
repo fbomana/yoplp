@@ -1,7 +1,7 @@
 package es.ait.yoplp.message;
 
 /**
- * Created by aitkiar on 20/11/15.
+ * Mensaje enviado para detener la reproducción.
  */
 public class StopMessage
 {

@@ -1,7 +1,9 @@
 package es.ait.yoplp.fileChooser;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -22,7 +25,9 @@ import es.ait.yoplp.R;
 import es.ait.yoplp.Utils;
 
 /**
- * Created by aitkiar on 24/08/15.
+ * Actividad que presenta un selector de ficheros al usuario, para que pueda seleccionar uno a uno los
+ * ficheros que va a reproducir o crear un nuevo directorio.
+ *
  */
 public class FileChooserActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -218,7 +223,21 @@ public class FileChooserActivity extends AppCompatActivity implements View.OnCli
                     }
                 }
             }
-        } catch (Throwable t)
+        }
+        catch ( IOException e )
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder( this );
+            builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setMessage( e.getMessage());
+            builder.setTitle("Error");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        catch (Throwable t)
         {
             Utils.dumpException(getBaseContext(), t);
             throw t;

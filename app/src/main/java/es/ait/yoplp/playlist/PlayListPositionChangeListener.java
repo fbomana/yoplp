@@ -1,7 +1,8 @@
 package es.ait.yoplp.playlist;
 
 /**
- * Created by aitkiar on 2/09/15.
+ * Interfaz que deben implementar las clases que quieran enterarse cuando hay cambios en la lista de
+ * reproducción.
  */
 public interface PlayListPositionChangeListener
 {

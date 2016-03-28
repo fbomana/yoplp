@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by aitkiar on 7/09/15.
+ * Clase con varios métodos genéricos con utilidad en diversas partes del programa.
  */
 public class Utils
 {

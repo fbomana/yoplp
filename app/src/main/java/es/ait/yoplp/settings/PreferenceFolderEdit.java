@@ -10,7 +10,8 @@ import es.ait.yoplp.fileChooser.FileChooserActivity;
 import es.ait.yoplp.fileChooser.FileComparator;
 
 /**
- * Created by aitkiar on 6/11/15.
+ * Clase que extiende la clase EditTextPreference para crear un cuadro de texto que al ser clickado lanza
+ * la actividad de selección de ficheros.
  */
 public class PreferenceFolderEdit extends EditTextPreference
 {

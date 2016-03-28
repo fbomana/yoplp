@@ -6,7 +6,8 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
 /**
- * Created by aitkiar on 2/10/15.
+ * Clase que devuelve el bus de comunicaciones con el que se intercambian mensajes la actividad principal
+ * y los servicios.
  */
 public class BusManager
 {

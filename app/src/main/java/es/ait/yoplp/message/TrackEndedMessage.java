@@ -1,7 +1,7 @@
 package es.ait.yoplp.message;
 
 /**
- * Created by aitkiar on 20/11/15.
+ * Mensaje enviado para indicar el fin de la reproducción de la pista actual.
  */
 public class TrackEndedMessage
 {

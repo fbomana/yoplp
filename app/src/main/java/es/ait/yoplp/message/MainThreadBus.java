@@ -6,7 +6,7 @@ import android.os.Looper;
 import com.squareup.otto.Bus;
 
 /**
- * Created by aitkiar on 2/10/15.
+ * Classe que extiende bus y se asegura de que todos los mensajes se publican sobre el Bus del hilo principal
  */
 class MainThreadBus extends Bus
 {
@@ -18,7 +18,8 @@ class MainThreadBus extends Bus
         if (Looper.myLooper() == Looper.getMainLooper())
         {
             super.post(event);
-        } else
+        }
+        else
         {
             mHandler.post(new Runnable()
             {
