@@ -96,6 +96,7 @@ public class M3UReader
                     {
                         //unreadable entry, do nothing.
                     }
+                    extinf = null;
                 }
 
             }
@@ -129,14 +130,18 @@ public class M3UReader
      */
     private void processExtInf( Track track, String extinf )
     {
-        int i = extinf.indexOf(":");
-        int j = extinf.indexOf(",");
-        if ( i >-1 || j > i )
+        if ( extinf != null )
         {
-            int seconds = Integer.parseInt( extinf.substring( i+1, j ));
-            track.setDurationMillis( seconds * 1000l );
-            track.setDuration(Utils.milisToText(track.getDurationMillis()));
-            track.setTitle( extinf.substring( j + 1 ).trim());
+            int i = extinf.indexOf(":");
+            int j = extinf.indexOf(",");
+            if (i > -1 || j > i)
+            {
+                int seconds = Integer.parseInt(extinf.substring(i + 1, j));
+                track.setDurationMillis(seconds * 1000l);
+                track.setDuration(Utils.milisToText(track.getDurationMillis()));
+                track.setTitle(extinf.substring(j + 1).trim());
+            }
+
         }
     }
 }
