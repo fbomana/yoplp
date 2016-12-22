@@ -1,7 +1,9 @@
 package es.ait.yoplp;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -61,6 +63,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     private ImageButton deleteButton;
     private ListView listView;
     private AtomicBoolean iniciarReproduccion;
+    private BroadcastReceiver reciver;
 
 
     // -------------------------------------------------------------------------------------------
@@ -123,6 +126,16 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 seekBar.setMax( Long.valueOf ( YOPLPAudioPlayer.getInstance().getDuration()).intValue());
             }
+
+            if ( reciver == null )
+            {
+                reciver = new PhoneStateReciver();
+                IntentFilter filter = new IntentFilter();
+                filter.addAction("android.intent.action.PHONE_STATE");
+                filter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+                getApplicationContext().registerReceiver( reciver, filter );
+            }
+
 
             iniciarReproduccion = new AtomicBoolean( false );
             if (PlayListManager.getInstance().isEmpty())

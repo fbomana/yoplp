@@ -83,25 +83,22 @@ class FolderAdapter extends ArrayAdapter
         }
         else
         {
-            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))
+            result.add( Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_MUSIC));
+            result.add( Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_RINGTONES));
+            result.add( Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_PODCASTS));
+            if ( Environment.MEDIA_MOUNTED.equals( Environment.getExternalStorageState()))
             {
-                File[] aux = new File("/storage").listFiles();
-                if ( aux == null || aux.length == 0 )
+                result.add(Environment.getExternalStorageDirectory());
+                File[] aux = new File( "/storage").listFiles();
+                for ( File file : aux )
                 {
-                    aux = new File("/mnt").listFiles();
-                }
-
-                for (File anAux : aux)
-                {
-                    if (anAux.getName().startsWith("sdcard"))
+                    // Search for all mounted media ( sd-crads, usb, ... )
+                    if ( file.canRead() && !file.getName().equals( "emulated") && !file.getName().equals("self"))
                     {
-                        result.add(anAux);
+                        result.add( file );
                     }
                 }
             }
-            result.add(Environment.getDataDirectory());
-            result.add(Environment.getRootDirectory());
         }
         return result;
     }

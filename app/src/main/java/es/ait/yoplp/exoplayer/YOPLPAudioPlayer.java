@@ -69,6 +69,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     private final Allocator allocator;
     private final Context context;
     private final AtomicBoolean playing = new AtomicBoolean( false );
+    private final AtomicBoolean paused = new AtomicBoolean( false );
 
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
@@ -125,6 +126,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         player.seekTo(position);
         player.setPlayWhenReady( true );
         playing.set(true);
+        paused.set( false );
     }
 
     /**
@@ -135,6 +137,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         if ( playing.get())
         {
             playing.set( false );
+            paused.set( false );
             player.stop();
             player.seekTo(0);
         }
@@ -148,6 +151,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         if ( player.getPlaybackState() != ExoPlayer.STATE_IDLE )
         {
             player.setPlayWhenReady(!player.getPlayWhenReady());
+            paused.set( !paused.get());
         }
     }
 
@@ -159,6 +163,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         {
             player.setPlayWhenReady( true );
             playing.set( true );
+            paused.set( false );
         }
     }
     /**
@@ -169,6 +174,10 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     public boolean isPlaying()
     {
         return playing.get();
+    }
+
+    public boolean isPaused() {
+        return paused.get();
     }
 
 
@@ -234,6 +243,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
         if ( playbackState == ExoPlayer.STATE_ENDED )
         {
             playing.set( false );
+            paused.set( false );
             BusManager.getBus().post( new TrackEndedMessage() );
         }
     }
@@ -242,6 +252,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     public void onPlayWhenReadyCommitted()
     {
         playing.set( true );
+        paused.set( false );
     }
 
     @Override
