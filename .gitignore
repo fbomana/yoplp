@@ -7,5 +7,6 @@ gradle.properties
 gradlew
 gradlew.bat
 local.properties
-Par.iml
 settings.gradle
+*.iml
+*.pro
