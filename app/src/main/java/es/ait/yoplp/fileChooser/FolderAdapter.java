@@ -97,7 +97,19 @@ class FolderAdapter extends ArrayAdapter
                     {
                         result.add( file );
                     }
+                    
                 }
+                
+                aux = new File("/mnt").listFiles();
+
+                for (File anAux : aux)
+                {
+                    if (anAux.getName().startsWith("sdcard") )
+                    {
+                        result.add(anAux);
+                    }
+                }
+
             }
         }
         return result;
