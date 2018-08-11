@@ -4,9 +4,14 @@ build/
 gradle/
 build.gradle
 gradle.properties
-gradlew
 gradlew.bat
 local.properties
 settings.gradle
 *.iml
-*.pro
+local.properties
+.idea/libraries
+.idea/workspace.xml
+.DS_Store
+captures
+.externalNativeBuild
+.directory  
