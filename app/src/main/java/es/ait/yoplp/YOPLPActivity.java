@@ -52,7 +52,7 @@ import es.ait.yoplp.playlist.Track;
 import es.ait.yoplp.playlist.YOPLPPlayingThread;
 import es.ait.yoplp.settings.YOPLPSettingsActivity;
 
-public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener
+    public class YOPLPActivity extends AppCompatActivity implements View.OnClickListener, PlayListPositionChangeListener, AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener
 {
     private int seleccionado = 0;
     private TextView textSongAlbum;
@@ -318,10 +318,17 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     Track track = plm.get();
                     if ( track != null )
                     {
-                        SeekBar seekBar = ( SeekBar ) findViewById( R.id.seekbarTime );
-                        ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getNewTimeAsString(track.getDurationMillis()));
-                        seekBar.setProgress(Long.valueOf(message.getNewTime()).intValue());
-
+                        if ( message.getTimeLeftAsLong( track.getDurationMillis() )  >= 0 ) {
+                            SeekBar seekBar = (SeekBar) findViewById(R.id.seekbarTime);
+                            ((TextView) findViewById(R.id.textSongTimeLeft)).setText(message.getTimeLeftAsString(track.getDurationMillis()));
+                            seekBar.setProgress(Long.valueOf(message.getNewTime()).intValue());
+                        }
+                        else
+                        {
+                            // In case the timeleft is less than 0 then we need to patch the bug
+                            // with the files that the library can't detect their end.
+                            BusManager.getBus().post(new NextMessage());
+                        }
                     }
                 }
             });

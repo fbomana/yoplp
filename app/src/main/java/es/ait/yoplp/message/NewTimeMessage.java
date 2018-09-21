@@ -21,7 +21,12 @@ public class NewTimeMessage
         return newTime;
     }
 
-    public String getNewTimeAsString( long duration )
+    public long getTimeLeftAsLong( long duration )
+    {
+        return duration - newTime;
+    }
+
+    public String getTimeLeftAsString( long duration )
     {
         return Utils.milisToText( duration - newTime );
     }
