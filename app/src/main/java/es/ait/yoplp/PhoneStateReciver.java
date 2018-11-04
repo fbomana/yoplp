@@ -22,11 +22,13 @@ public class PhoneStateReciver extends BroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent)
     {
-        if ( intent != null && "PHONE_STATE".equals( intent.getAction()))
+        Log.d( LOGCAT, String.format( "Phone event received: %s", intent.getAction()));
+        if ( intent != null && "android.intent.action.PHONE_STATE".equals( intent.getAction()))
         {
             Bundle extras = intent.getExtras();
             if ( extras != null )
             {
+                Log.d( LOGCAT, String.format("Phone event %s", extras.getString("state") ));
                 if ( "RINGING".equals( extras.getString("state")) || "OFFHOOK".equals( extras.getString("state")))
                 {
                     if (YOPLPAudioPlayer.getInstance().isPlaying())
@@ -42,7 +44,6 @@ public class PhoneStateReciver extends BroadcastReceiver
                     }
                 }
             }
-
         }
 
     }

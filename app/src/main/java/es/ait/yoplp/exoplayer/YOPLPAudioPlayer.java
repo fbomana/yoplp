@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaCodec;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
@@ -32,8 +33,9 @@ import es.ait.yoplp.playlist.Track;
  */
 public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListener, ExoPlayer.Listener
 {
-    // Singleton managmente
+    // Singleton management
     private static YOPLPAudioPlayer instance;
+    private final String LOGCAT = "[YOPLP]";
 
     public static YOPLPAudioPlayer getInstance( Context context )
     {
@@ -148,6 +150,7 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
      */
     public void togglePausePlay()
     {
+        Log.d( LOGCAT, String.format("togglePausePlay - PlaybackState:[%d] - PlayWhenReady:[%s]", player.getPlaybackState(), player.getPlayWhenReady()));
         if ( player.getPlaybackState() != ExoPlayer.STATE_IDLE )
         {
             player.setPlayWhenReady(!player.getPlayWhenReady());

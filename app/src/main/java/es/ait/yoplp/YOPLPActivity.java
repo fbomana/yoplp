@@ -78,7 +78,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         {
             super.onCreate(savedInstanceState);
 
-            Log.e("[YOPLP]", "------------------------------ onCre4ate ---------------------------------------");
+            Log.e("[YOPLP]", "------------------------------ onCreate ---------------------------------------");
             YOPLPPlayingThread.getInstance(this); // This way the runnable item it's created and associated to the bus before onResume method
 
             if ( !Utils.isMyServiceRunning( this, PlayListService.class.getName()))
@@ -124,6 +124,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             seekBar.setOnSeekBarChangeListener(this);
             if ( YOPLPAudioPlayer.getInstance().isPlaying() )
             {
+                Log.d("[YOPLP]", "Audio is playing");
                 seekBar.setMax( Long.valueOf ( YOPLPAudioPlayer.getInstance().getDuration()).intValue());
             }
 
@@ -140,6 +141,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             iniciarReproduccion = new AtomicBoolean( false );
             if (PlayListManager.getInstance().isEmpty())
             {
+                Log.d("[YOPLP]", "Empty playlist");
                 try
                 {
                     File file = new File(getBaseContext().getFilesDir(), "yoplpsavedplaylist.m3u");
