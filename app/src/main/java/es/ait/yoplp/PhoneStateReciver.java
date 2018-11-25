@@ -31,12 +31,12 @@ public class PhoneStateReciver extends BroadcastReceiver
                 Log.d( LOGCAT, String.format("Phone event %s", extras.getString("state") ));
                 if ( "RINGING".equals( extras.getString("state")) || "OFFHOOK".equals( extras.getString("state")))
                 {
-                    if (YOPLPAudioPlayer.getInstance().isPlaying())
+                    if ( YOPLPAudioPlayer.getInstance() != null && YOPLPAudioPlayer.getInstance().isPlaying())
                     {
                         BusManager.getBus().post( new PauseMessage());
                     }
                 }
-                else if ( "IDLE".equals( extras.getString("state")))
+                else if ( YOPLPAudioPlayer.getInstance() != null && "IDLE".equals( extras.getString("state")))
                 {
                     if ( YOPLPAudioPlayer.getInstance().isPaused())
                     {

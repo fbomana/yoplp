@@ -280,6 +280,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             {
                 editor.putLong("playing position", YOPLPAudioPlayer.getInstance().getCurrentPosition());
             }
+
             editor.commit();
         }
     }
@@ -291,6 +292,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         Log.e("[YOPLP]", "------------------------------ onDestroy ---------------------------------------");
         Intent audioServiceIntent = new Intent( this, PlayListService.class );
         stopService(audioServiceIntent);
+        getApplicationContext().unregisterReceiver( reciver );
     }
 
     @Override

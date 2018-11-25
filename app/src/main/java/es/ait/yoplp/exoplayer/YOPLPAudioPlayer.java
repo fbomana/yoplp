@@ -177,11 +177,11 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
      */
     public boolean isPlaying()
     {
-        return playing.get();
+        return playing != null && playing.get();
     }
 
     public boolean isPaused() {
-        return paused.get();
+        return paused != null && paused.get();
     }
 
 
