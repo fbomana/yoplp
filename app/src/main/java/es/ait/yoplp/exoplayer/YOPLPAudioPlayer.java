@@ -151,11 +151,12 @@ public class YOPLPAudioPlayer implements MediaCodecAudioTrackRenderer.EventListe
     public void togglePausePlay()
     {
         Log.d( LOGCAT, String.format("togglePausePlay - PlaybackState:[%d] - PlayWhenReady:[%s]", player.getPlaybackState(), player.getPlayWhenReady()));
-        if ( player.getPlaybackState() != ExoPlayer.STATE_IDLE )
+        if ( player.getPlaybackState() != ExoPlayer.STATE_IDLE && !paused.get())
         {
             player.setPlayWhenReady(!player.getPlayWhenReady());
             paused.set( !paused.get());
         }
+        Log.d( LOGCAT, String.format("togglePausePlay - PlaybackState:[%d] - PlayWhenReady:[%s]", player.getPlaybackState(), player.getPlayWhenReady()));
     }
 
 
