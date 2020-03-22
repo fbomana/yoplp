@@ -21,36 +21,45 @@ import es.ait.yoplp.message.TrackEndedMessage;
  * Clase que implementa runnable y que se usa para gestionar en un hilo separado el servicio de reproducción
  * de audio de la aplicación.
  */
-public class YOPLPPlayingThread implements Runnable
-{
+public class YOPLPPlayingThread implements Runnable {
     private static YOPLPPlayingThread instance;
 
     private final YOPLPAudioPlayer player;
     private boolean stop = false;
+    private boolean loop = false;
     private Context context;
 
-    public static YOPLPPlayingThread getInstance( Context context )
-    {
-        if ( instance == null )
-        {
-            instance = new YOPLPPlayingThread( YOPLPAudioPlayer.getInstance( context ));
+    public static YOPLPPlayingThread getInstance(Context context) {
+        if (instance == null) {
+            instance = new YOPLPPlayingThread(YOPLPAudioPlayer.getInstance(context));
         }
         instance.context = context;
         instance.stop = false;
         return instance;
     }
 
-    private YOPLPPlayingThread ( YOPLPAudioPlayer player )
-    {
+    private YOPLPPlayingThread(YOPLPAudioPlayer player) {
         Log.e("[YOPLP]", "En el constructor de YOPLPPlayingThread");
         this.player = player;
         BusManager.getBus().register(this);
+    }
+
+    public void setLoop(boolean loop)
+    {
+        this.loop = loop;
+    }
+
+    public boolean isLoop( )
+    {
+        return loop;
     }
 
     public void stop()
     {
         this.stop = true;
     }
+
+    public boolean isPaused( ) { return player.isPaused(); }
 
     @Override
     public void run()
@@ -131,6 +140,16 @@ public class YOPLPPlayingThread implements Runnable
 
         if ( plm.next() )
         {
+            player.stop();
+            Track track = plm.get();
+            if ( track != null )
+            {
+                player.start( track, 0 );
+            }
+        }
+        else if ( !plm.isEmpty() && loop )
+        {
+            plm.first();
             player.stop();
             Track track = plm.get();
             if ( track != null )

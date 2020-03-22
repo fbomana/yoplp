@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -58,13 +59,14 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
     private TextView textSongAlbum;
     private TextView textSongAuthor;
     private ToggleButton selecciontModeButton;
+    private ImageButton pauseButton;
     private ImageButton upButton;
     private ImageButton downButton;
     private ImageButton deleteButton;
+    private ImageButton loopButton;
     private ListView listView;
     private AtomicBoolean iniciarReproduccion;
     private BroadcastReceiver reciver;
-
 
     // -------------------------------------------------------------------------------------------
     // Activity Lifecicle methods
@@ -95,8 +97,8 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             button = (ImageButton) findViewById(R.id.stopButton);
             button.setOnClickListener(this);
 
-            button = (ImageButton) findViewById(R.id.pauseButtopn);
-            button.setOnClickListener(this);
+            pauseButton = (ImageButton) findViewById(R.id.pauseButtopn);
+            pauseButton.setOnClickListener(this);
 
             button = (ImageButton) findViewById(R.id.previousButton);
             button.setOnClickListener(this);
@@ -104,6 +106,10 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
             button = (ImageButton) findViewById(R.id.nextButton);
             button.setOnClickListener(this);
             PlayListManager.getInstance().addPlayListPositionChangeListener(this);
+
+            loopButton = ( ImageButton ) findViewById( R.id.buttonLoop );
+            loopButton.setOnClickListener( this );
+
 
             upButton = (ImageButton) findViewById(R.id.buttonUp);
             upButton.setOnClickListener(this);
@@ -436,6 +442,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 case R.id.playButton:
                 {
                     BusManager.getBus().post( new PlayMessage());
+                    togglePauseColor();
                     break;
                 }
                 case R.id.stopButton:
@@ -446,6 +453,7 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                 case R.id.pauseButtopn:
                 {
                     BusManager.getBus().post(new PauseMessage());
+                    togglePauseColor();
                     break;
                 }
                 case R.id.previousButton:
@@ -508,6 +516,12 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
                     playListPositionChanged(PlayListManager.getInstance().getPointer());
                     break;
                 }
+                case R.id.buttonLoop:
+                {
+                    YOPLPPlayingThread thread = YOPLPPlayingThread.getInstance(this);
+                    thread.setLoop( !thread.isLoop());
+                    loopButton.setColorFilter(Color.argb(255, thread.isLoop() ? 255: 0, 0, 0));
+                }
 
             }
         }
@@ -515,6 +529,16 @@ public class YOPLPActivity extends AppCompatActivity implements View.OnClickList
         {
             Utils.dumpException( getBaseContext(), t );
             throw t;
+        }
+    }
+
+    private void togglePauseColor()
+    {
+        PlayListManager<Track> plm = PlayListManager.getInstance();
+        YOPLPPlayingThread thread = YOPLPPlayingThread.getInstance(this);
+
+        if ( !plm.isEmpty()) {
+            pauseButton.setColorFilter( thread.isPaused() ? Color.argb(255, 128, 255, 128) : Color.argb(255, 255, 255, 255));
         }
     }
 
